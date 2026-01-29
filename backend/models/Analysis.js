@@ -27,6 +27,9 @@ const AnalysisSchema = new mongoose.Schema({
     analysisScore:{
         type: Number,
         default: null,
+    },
+    formatting:{
+        type: Number,
     }
 });
 module.export = mongoose.model("Analysis", AnalysisSchema);
