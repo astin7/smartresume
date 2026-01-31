@@ -3,6 +3,8 @@ const authRoutes = require("./routes/auth.routes");
 const analysisRoutes = require("./routes/analysis.routes");
 
 const app = express();
+const analysisRoutes = require("../routes/analysis.routes");
+
 
 app.use(express.json());
 
