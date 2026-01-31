@@ -2,25 +2,24 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 
 const registerUser = async (req, res) => {
+    console.log("REGISTER CONTROLLER HIT");
+
     try {
         const { email, password, username } = req.body;
 
-        if (!email || !password) {
-            return res.status(400).json({ error: "Email and password are required" });
-        }
-
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
+        const userExists = await User.findOne({ email });
+        if (userExists) {
             return res.status(400).json({ error: "User already exists" });
         }
 
         await User.create({ email, password, username });
 
         res.status(201).json({ message: "User registered successfully" });
-    } catch {
-        res.status(500).json({ error: "Server error" });
+    } catch (error) {
+        console.error("REGISTER ERROR:", error);
+        res.status(500).json({ error: error.message });
     }
-    };
+};
 
     const loginUser = async (req, res) => {
     try {
@@ -43,4 +42,7 @@ const registerUser = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, loginUser };
+module.exports = {
+    registerUser,
+    loginUser
+};

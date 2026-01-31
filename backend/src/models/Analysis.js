@@ -1,5 +1,7 @@
+const mongoose = require("mongoose");
+
 const AnalysisSchema = new mongoose.Schema({
-    userID:{
+    user:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
@@ -32,5 +34,4 @@ const AnalysisSchema = new mongoose.Schema({
         type: Number,
     }
 });
-module.export = mongoose.model("Analysis", AnalysisSchema);
-
+module.exports = mongoose.model("Analysis", AnalysisSchema);
