@@ -37,9 +37,10 @@ const registerUser = async (req, res) => {
         );
 
         res.json({ token });
-    } catch {
+    }   catch (error) {
+        console.error("LOGIN ERROR:", error);
         res.status(500).json({ error: "Server error" });
-    }
+        }
 };
 
 module.exports = {
