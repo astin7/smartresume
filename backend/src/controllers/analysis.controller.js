@@ -22,9 +22,21 @@ function extractSkills(textInput){
 //When the controller is used, create a new analysis entry
 
 exports.createAnalysis = async (req, res) => {
+    console.log("Create Analysis Hit");
     try{
+        
+        const { resumeText, jobDescription,  jobTitle } = req.body;
+        //temporary userID until auth is implemented
+        //const userId = req.user?._id || "000000000000000000000000";
 
-        const { resumeText, jobDescription,  jobTitle, userID} = req.body;
+        if (!req.user || !req.user._id) {
+            return res.status(400).json({
+                success: false,
+                error: "need to input Resume Text and Job Description"
+            });
+        }
+            
+
         // Extract skills from resume and job description
         const applicantSkills = extractSkills(resumeText);
         const postingSkills = extractSkills(jobDescription);
@@ -33,24 +45,29 @@ exports.createAnalysis = async (req, res) => {
         const missingSkills = postingSkills.filter(skill => !applicantSkills.includes(skill));
 
         //Calculate analysis score
-        const score = Math.round((requiredSkills.length - missingSkills.length) / requiredSkills.length * 100);
+        const score = 
+            postingSkills.length === 0 ? 0 :
+            Math.round((postingSkills.length - missingSkills.length) / postingSkills.length * 100);
 
         //create the analysis model
         const analysis = await Analysis.create({
-            userID,
+            user: userId,
             jobTitle,
             jobDescription,
             resumeText,
-            aaplicantSkills,
+            applicantSkills,
             postingSkills,
             analysisScore: score,
-        })
+        });
         res.status(201).json({
-            sucess: true,
-            data: analysis
+            success: true,
+            analysis:{
+                ...analysis.toObject(),
+                missingSkills
+            }
         });
     } catch (error) {
-        console.error(error);
+        console.error("Create analysis error:",error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
