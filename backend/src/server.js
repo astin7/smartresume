@@ -10,7 +10,6 @@ mongoose.connect(mongo_url)
     console.log("Connected to MongoDB");
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
-      console.log("Server is running")
    });
   })
 .catch((error) =>{
