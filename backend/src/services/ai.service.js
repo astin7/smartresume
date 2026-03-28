@@ -1,33 +1,38 @@
+// backend/src/services/ai.service.js
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-const gen = new GoogleGenerativeAI(process.env.AI_API_KEY);
-const model = gen.getGenerativeModel({model: "gemini-1.5-flash"});
-
-exports.runAIAnalysis = async (jobDescription, resumeText) => {
+exports.runAIAnalysis = async (resumeText, jobDescription) => {
+    // Initializing inside the function ensures process.env is ready
+    const gen = new GoogleGenerativeAI(process.env.AI_API_KEY);
+    const model = gen.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+    
     const prompt = `
     You are a resume analysis expert. 
     Please compare this applicant's resume info against the job description 
-    and return a valid json in this format
+    and return ONLY a valid JSON object in this format:
     {
-        "applicantSkills": [list of skills from the resume],
-        "postingSkills": [list of skills from the job description]
-        "analysisScore": integer score from 0 to 100 indicating how well the applicant's skills match the job description
+        "applicantSkills": ["skill1", "skill2"],
+        "postingSkills": ["skill1", "skill2"],
+        "analysisScore": 85
     }
-    Resume:
-    ${resumeText}
-
-    Job Description:
-    ${jobDescription}
+    
+    Resume: ${resumeText}
+    Job Description: ${jobDescription}
     `;
-    const response = await model.generateContent(prompt);
-    //set repsonse to text
-    const text = response.response.text();
 
-    //did Gemini wrap text or return a valid json?
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-    throw new Error("AI did not return JSON");
-  }
-    return JSON.parse(jsonMatch[0]);
+    try {
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
 
-}
+        // Extract JSON using regex in case Gemini wraps it in markdown code blocks
+        const jsonMatch = text.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) {
+            throw new Error("AI did not return valid JSON");
+        }
+        return JSON.parse(jsonMatch[0]);
+    } catch (error) {
+        console.error("Gemini AI Service Error:", error.message);
+        throw error; // Let the controller handle the catch
+    }
+};

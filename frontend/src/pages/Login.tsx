@@ -5,13 +5,11 @@ import { loginUser } from '../services/api';
 export default function Login() {
   const navigate = useNavigate();
   
-  // State for form inputs
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
 
-  // State for UI feedback
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,14 +24,22 @@ export default function Login() {
 
     try {
       const response = await loginUser(formData);
-      
-      // What keeps the user logged in
+      console.log("Login Response:", response.data);
+
       if (response.data && response.data.token) {
+        // Store the JWT Token
         localStorage.setItem('token', response.data.token);
-        // If your backend sends user info, save that too
-        localStorage.setItem('user', JSON.stringify(response.data.user));
         
-        navigate('/dashboard'); // This takes them to the app
+        // Store User Data - fallback to email if name is missing from backend
+        const userObj = {
+          name: response.data.user?.name || "User", 
+          email: response.data.user?.email || formData.email
+        };
+        
+        localStorage.setItem('user', JSON.stringify(userObj));
+        
+        // Redirect to Dashboard
+        navigate('/dashboard'); 
       }
     } catch (err: any) {
       console.error("Login error:", err);

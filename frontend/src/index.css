@@ -472,19 +472,6 @@ body { width: 100%; overflow-x: hidden; background: var(--black); }
   color: var(--white);
 }
 
-/* Mobile Responsive */
-@media (max-width: 900px) {
-  .pricing-grid {
-    grid-template-columns: 1fr;
-  }
-  .featured-card {
-    transform: scale(1); 
-  }
-  .featured-card:hover {
-    transform: translateY(-5px);
-  }
-}
-
 /* Footer */
 .footer-goji {
   background-color: var(--black);
@@ -573,24 +560,6 @@ body { width: 100%; overflow-x: hidden; background: var(--black); }
   color: var(--white);
   text-decoration: none;
   font-weight: 500;
-}
-
-/* Responsive Footer */
-@media (max-width: 1024px) {
-  .footer-bottom-bar {
-    flex-direction: column;
-    gap: 3rem;
-    text-align: center;
-  }
-  
-  .footer-left, .footer-right {
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .footer-huge-text {
-    font-size: 5rem;
-  }
 }
 
 /* Auth pages (login/signup) */
@@ -730,17 +699,15 @@ body { width: 100%; overflow-x: hidden; background: var(--black); }
 }
 
 /* Dashboard Specifics */
-/* Ensure the whole dashboard is a side-by-side flexbox */
 .dashboard-layout {
   display: flex;
-  flex-direction: row; /* Forces sidebar and main to be side-by-side */
+  flex-direction: row; 
   min-height: 100vh;
   width: 100vw;
   background-color: var(--black);
   overflow-x: hidden;
 }
 
-/* Sidebar needs a fixed width */
 .sidebar {
   width: 260px;
   min-width: 260px;
@@ -753,17 +720,15 @@ body { width: 100%; overflow-x: hidden; background: var(--black); }
   top: 0;
 }
 
-/* Main content MUST grow to fill the right side */
 .dashboard-main {
-  flex-grow: 1; /* This pushes the main content to fill the screen */
+  flex-grow: 1; 
   padding: 4rem;
   display: flex;
   flex-direction: column;
   gap: 3rem;
-  max-width: 1200px; /* Optional: keeps things from getting TOO wide on big monitors */
+  max-width: 1200px;
 }
 
-/* Clean up the header layout */
 .dash-header {
   display: flex;
   justify-content: space-between;
@@ -779,10 +744,50 @@ body { width: 100%; overflow-x: hidden; background: var(--black); }
   color: white;
   width: 300px;
 }
+
 .sidebar-logo {
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
+  color: var(--white) !important; 
   margin-bottom: 3rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sidebar-user {
+  margin-top: auto;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-dark);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  background: var(--red);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.user-info p.user-name {
+  color: var(--white) !important;
+  font-weight: 600;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.user-info p.user-plan {
+  color: #71717a !important; 
+  font-size: 0.8rem;
+  margin: 0;
 }
 
 .sidebar-nav {
@@ -814,24 +819,37 @@ body { width: 100%; overflow-x: hidden; background: var(--black); }
 /* Job Cards */
 .job-grid {
   display: grid;
-  /* This creates as many columns as fit, but at least 350px wide each */
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1.5rem;
   width: 100%;
 }
 
+.job-card {
+  background: #0a0a0a;
+  border: 1px solid var(--border-dark);
+  padding: 2rem;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+}
+
+.job-card:hover {
+  border-color: var(--red);
+  background: #111;
+  transform: translateY(-2px);
+}
+
 .job-card h3 {
-    color: #ffffff; /* Bright white for titles */
+    color: #ffffff; 
     margin-bottom: 4px;
 }
 
 .job-card p {
-    color: #94a3b8; /* Soft blue-gray for the company/location */
+    color: #94a3b8; 
     font-size: 0.9rem;
 }
 
 .match-label {
-    color: #64748b; /* Muted gray for the label */
+    color: #64748b;
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -863,4 +881,43 @@ body { width: 100%; overflow-x: hidden; background: var(--black); }
 .analyze-btn:hover {
   background: var(--white);
   color: var(--black);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 900px) {
+  .container { padding: 0 1.5rem; }
+  .navbar { height: auto; padding: 1rem 0; position: relative; }
+  .nav-container { flex-direction: column; gap: 1.5rem; text-align: center; }
+  .nav-menu { flex-wrap: wrap; justify-content: center; gap: 1rem; }
+  .hero-section { padding-top: 5rem; }
+  .hero-split, .split-header, .flush-grid-2x2, .flush-grid-process, .hero-stats-grid, .pricing-grid { 
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: 1fr !important; 
+    gap: 2rem !important; 
+    border: none !important;
+  }
+
+  .grid-cell, 
+  .header-text-side, 
+  .stat-cell, 
+  .pricing-card {
+    padding: 3rem 1.5rem !important;
+    border: 1px solid var(--border-dark) !important;
+    border-radius: 16px !important;
+    width: 100% !important;
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .header-text-side { border-right: none !important; border-bottom: 1px solid currentColor; }
+  .dashboard-layout { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border-dark); }
+  .dashboard-main { padding: 2rem 1.5rem; }
+  .job-grid { grid-template-columns: 1fr; }
+  .hero-title { font-size: 2.5rem; text-align: center; }
+  .hero-sub { text-align: center; margin: 0 auto; }
+  .footer-huge-text { font-size: 4rem; }
+  .flowchart { flex-direction: column; gap: 1.5rem; }
+  .flow-line { width: 1px; height: 30px; transform: none; margin: 0; }
+  .process-graphic-cell { padding: 2rem 0 !important; border: none !important; }
 }

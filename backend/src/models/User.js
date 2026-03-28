@@ -16,6 +16,14 @@ const userSchema = new mongoose.Schema(
         password: {
             type: String,
             required: true
+        },
+        resumeUrl: { 
+            type: String, 
+            default: "" 
+        },
+        settings: {
+            targetRole: { type: String, default: "Software Engineer" },
+            theme: { type: String, default: "dark" }
         }
     },
     { 

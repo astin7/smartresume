@@ -7,7 +7,7 @@ const authRoutes = require("./routes/auth.routes");
 const app = express();
 
 app.use(cors({
-    origin: "*", // Allows any origin to hit the server during testing (must change after done testing)
+    origin: "http://localhost:5173",
     credentials: true
 }));
 

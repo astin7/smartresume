@@ -1,11 +1,9 @@
-// Controller Contains the Logic for the analysis logic
-
+// backend/src/controllers/analysis.controller.js
 const Analysis = require("../models/Analysis");
+const { runAIAnalysis } = require("../services/ai.service");
 
-// function that extracts from the skill list
+// Manual fallback skill extraction logic
 function extractSkills(textInput){
-
-    // Here is the skill list it will extract from 
     const skillSet = [
         "Javascript", "Microsoft Excel", "Microsoft Office", "QuickBooks", "Python",
         "SQL", "Tableau", "R", "Java", "C++", "HTML", "CSS", "React", "Node.js",
@@ -13,61 +11,74 @@ function extractSkills(textInput){
         "Data Analysis", "Project Management", "Agile Methodologies", "Scrum",
         "Communication", "Leadership", "Problem Solving", "Time Management"
     ];
-
     const toLowerCase = textInput.toLowerCase();
-    // Filters for the extracted skills by comparing input to the skill set
     return skillSet.filter(skill => toLowerCase.includes(skill.toLowerCase()));
 }
 
-//When the controller is used, create a new analysis entry
-
 exports.createAnalysis = async (req, res) => {
-    console.log("Create Analysis Hit");
-    try{
-        
-        const { resumeText, jobDescription,  jobTitle } = req.body;
-        //temporary userID until auth is implemented
-        //const userId = req.user?._id || "000000000000000000000000";
+    console.log("Create Analysis Hit - Starting AI Processing...");
+    try {
+        const { resumeText, jobDescription, jobTitle } = req.body;
+        const userId = req.user?._id;
 
-        if (!req.user || !req.user._id) {
-            return res.status(400).json({
-                success: false,
-                error: "need to input Resume Text and Job Description"
-            });
+        if (!resumeText || !jobDescription) {
+            return res.status(400).json({ success: false, error: "Missing data" });
         }
+
+        if (!userId) {
+            return res.status(401).json({ success: false, error: "Not authenticated" });
+        }
+
+        // Call the AI Service
+        let aiResults;
+        try {
+            aiResults = await runAIAnalysis(resumeText, jobDescription);
+        } catch (aiError) {
+            console.error("AI Analysis failed, falling back to manual extraction:", aiError.message);
+            const manualApplicant = extractSkills(resumeText);
+            const manualPosting = extractSkills(jobDescription);
             
+            // Manual fallback calculation
+            const manualMissing = manualPosting.filter(postSkill => 
+                !manualApplicant.some(appSkill => appSkill.toLowerCase() === postSkill.toLowerCase())
+            );
 
-        // Extract skills from resume and job description
-        const applicantSkills = extractSkills(resumeText);
-        const postingSkills = extractSkills(jobDescription);
+            aiResults = {
+                applicantSkills: manualApplicant,
+                postingSkills: manualPosting,
+                analysisScore: manualPosting.length === 0 ? 0 : 
+                    Math.round(((manualPosting.length - manualMissing.length) / manualPosting.length) * 100)
+            };
+        }
 
-        //Find how many skills are missing
-        const missingSkills = postingSkills.filter(skill => !applicantSkills.includes(skill));
-
-        //Calculate analysis score
-        const score = 
-            postingSkills.length === 0 ? 0 :
-            Math.round((postingSkills.length - missingSkills.length) / postingSkills.length * 100);
-
-        //create the analysis model
+        // Create the record in MongoDB
         const analysis = await Analysis.create({
             user: userId,
             jobTitle,
             jobDescription,
             resumeText,
-            applicantSkills,
-            postingSkills,
-            analysisScore: score,
+            applicantSkills: aiResults.applicantSkills,
+            postingSkills: aiResults.postingSkills,
+            analysisScore: aiResults.analysisScore,
         });
+
+        // 3. Case-insensitive missing skills calculation
+        // makes sure "Python" matches "python" so the red box populates correctly
+        const missingSkills = aiResults.postingSkills.filter(postSkill => 
+            !aiResults.applicantSkills.some(appSkill => 
+                appSkill.toLowerCase() === postSkill.toLowerCase()
+            )
+        );
+
         res.status(201).json({
             success: true,
-            analysis:{
+            analysis: {
                 ...analysis.toObject(),
-                missingSkills
+                missingSkills: missingSkills
             }
         });
     } catch (error) {
-        console.error("Create analysis error:",error);
+        console.error("Full Analysis Controller Error:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 };

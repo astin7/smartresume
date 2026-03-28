@@ -38,7 +38,7 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* HERO*/}
+      {/* HERO */}
       <section className="section-black hero-section">
         <div className="container">
           <div className="hero-split">
