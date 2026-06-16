@@ -5,15 +5,16 @@ const jwt = require("jsonwebtoken");
 const registerUser = async (req, res) => {
     console.log("REGISTER CONTROLLER HIT");
     try {
-        const { email, password, username } = req.body;
+        // CHANGED 'username' to 'name'
+        const { email, password, name } = req.body;
 
         const userExists = await User.findOne({ email });
         if (userExists) {
             return res.status(400).json({ error: "User already exists" });
         }
 
-        // Create the user
-        const user = await User.create({ email, password, username });
+        // CHANGED 'username' to 'name'
+        const user = await User.create({ email, password, name });
 
         // Generate token immediately so they are logged in after signup
         const token = jwt.sign(
@@ -27,7 +28,7 @@ const registerUser = async (req, res) => {
             token,
             user: {
                 id: user._id,
-                name: user.username, // Using username as the display name
+                name: user.name, // CHANGED to user.name
                 email: user.email
             }
         });
@@ -43,7 +44,7 @@ const loginUser = async (req, res) => {
 
         const user = await User.findOne({ email });
         if (!user || !(await user.matchPassword(password))) {
-            return res.status(401).json({ error: "Invalid credentials" });
+            return res.status(401).json({ message: "Invalid email or password!" });
         }
 
         const token = jwt.sign(
@@ -52,22 +53,35 @@ const loginUser = async (req, res) => {
             { expiresIn: "1d" }
         );
 
-        // CRITICAL: Send the user object so the Dashboard can show the name
         res.json({ 
             token,
             user: {
                 id: user._id,
-                name: user.username, // Sending the username back to the frontend
+                name: user.name, // CHANGED to user.name
                 email: user.email
             }
         });
     } catch (error) {
         console.error("LOGIN ERROR:", error);
-        res.status(500).json({ error: "Server error" });
+        res.status(500).json({ message: "Server error during login" });
+    }
+};
+
+const getUserProfile = async (req, res) => {
+    // req.user is securely fetched by the authMiddleware before this runs
+    if (req.user) {
+        res.json({
+            id: req.user._id,
+            name: req.user.name, // CHANGED to req.user.name
+            email: req.user.email,
+        });
+    } else {
+        res.status(404).json({ message: "User not found" });
     }
 };
 
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    getUserProfile 
 };

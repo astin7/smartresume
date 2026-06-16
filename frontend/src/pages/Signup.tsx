@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { API } from "../services/api"; // Your axios setup from earlier!
+import { API } from "../services/api"; 
 import "./Auth.css";
 
 export default function Signup() {
@@ -21,16 +21,24 @@ export default function Signup() {
 
   // 3. Handle the form submission
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevents the page from refreshing
+    e.preventDefault(); 
     setError("");
 
     try {
-      // Send the data to your backend route (adjust the URL if your backend route is different)
-      const response = await API.post('/auth/register', formData);
+      // Send the data to your backend route
+      const response = await API.post('/api/auth/register', formData);
       
       console.log("Signup successful!", response.data);
-      // Redirect the user to the login page or dashboard after success
-      navigate("/login");
+      
+      // --- NEW AUTO-LOGIN LOGIC ---
+      // Save the token the backend just generated for us
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+      }
+
+      // Shoot straight to the dashboard!
+      navigate("/dashboard");
+      // ----------------------------
       
     } catch (err: any) {
       // If the backend sends back an error (e.g., "Email already in use")
@@ -42,7 +50,7 @@ export default function Signup() {
     <div className="auth-layout">
       <div className="auth-card">
         <div className="auth-header">
-          <Link to="/" className="auth-logo">RESUMEAI</Link>
+          <Link to="/" className="auth-logo">EVEREST</Link>
           <h1>Create an account</h1>
           <p>Start optimizing your resume for free.</p>
         </div>
@@ -51,7 +59,7 @@ export default function Signup() {
         <form className="auth-form" onSubmit={handleSubmit}>
           
           {/* Display backend errors if there are any */}
-          {error && <div style={{ color: "red", fontSize: "0.85rem", marginBottom: "1rem" }}>{error}</div>}
+          {error && <div style={{ color: "#dc2626", backgroundColor: "#fef2f2", padding: "10px", borderRadius: "6px", fontSize: "0.85rem", marginBottom: "1rem", border: "1px solid #f87171" }}>{error}</div>}
 
           <div className="form-group">
             <label htmlFor="name">Full Name</label>
