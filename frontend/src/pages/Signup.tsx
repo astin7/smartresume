@@ -1,116 +1,97 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { signupUser } from '../services/api';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { API } from "../services/api"; // Your axios setup from earlier!
+import "./Auth.css";
 
 export default function Signup() {
   const navigate = useNavigate();
   
-  // Track the input fields
+  // 1. Create state to hold the form data
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: ''
+    name: "",
+    email: "",
+    password: ""
   });
+  const [error, setError] = useState("");
 
-  // Track UI states (loading animation and error messages)
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Handle typing in the boxes
+  // 2. Handle typing in the inputs
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  // Handle the button click
+  // 3. Handle the form submission
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Stops the page from refreshing
-    setError('');
-    setIsLoading(true);
+    e.preventDefault(); // Prevents the page from refreshing
+    setError("");
 
     try {
-      // Send the data to your Node.js backend (Port 5050)
-      const response = await signupUser(formData);
+      // Send the data to your backend route (adjust the URL if your backend route is different)
+      const response = await API.post('/auth/register', formData);
       
-      // If your backend sends a token back immediately on signup, save it!
-      if (response.data && response.data.token) {
-        localStorage.setItem('token', response.data.token);
-        navigate('/dashboard'); // Teleport them to the dashboard
-      } else {
-        // Otherwise, just send them to the login page to sign in normally
-        navigate('/login'); 
-      }
+      console.log("Signup successful!", response.data);
+      // Redirect the user to the login page or dashboard after success
+      navigate("/login");
+      
     } catch (err: any) {
-      console.error("Signup error:", err);
-      // Display the error message from your backend, or a generic one
-      setError(err.response?.data?.error || err.response?.data?.message || "Failed to create account.");
-    } finally {
-      setIsLoading(false);
+      // If the backend sends back an error (e.g., "Email already in use")
+      setError(err.response?.data?.message || "Failed to sign up. Please try again.");
     }
   };
 
   return (
-    <div className="auth-page">
-      <div className="auth-container">
-        <Link to="/" className="auth-logo">✨ ResumeAI</Link>
+    <div className="auth-layout">
+      <div className="auth-card">
+        <div className="auth-header">
+          <Link to="/" className="auth-logo">RESUMEAI</Link>
+          <h1>Create an account</h1>
+          <p>Start optimizing your resume for free.</p>
+        </div>
 
-        <div className="auth-card">
-          <div className="auth-header">
-            <div className="auth-badge">
-              <span className="dot red"></span> 
-              New Account
-            </div>
-            <h1>Create Account</h1>
-            <p>Start optimizing your career today.</p>
+        {/* 4. Connect the form to the submit handler */}
+        <form className="auth-form" onSubmit={handleSubmit}>
+          
+          {/* Display backend errors if there are any */}
+          {error && <div style={{ color: "red", fontSize: "0.85rem", marginBottom: "1rem" }}>{error}</div>}
+
+          <div className="form-group">
+            <label htmlFor="name">Full Name</label>
+            <input 
+              type="text" 
+              id="name" 
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="John Doe" 
+              required 
+            />
           </div>
-
-          <form className="auth-form" onSubmit={handleSubmit}>
-            {/* Show an error message if the backend rejects the signup */}
-            {error && <div style={{ color: '#e11d48', fontSize: '0.85rem', textAlign: 'center', background: 'rgba(225, 29, 72, 0.1)', padding: '10px', borderRadius: '6px' }}>{error}</div>}
-
-            <div className="input-group">
-              <label>Username</label>
-              <input 
-                type="text" 
-                name="username"
-                placeholder="john_smith" 
-                value={formData.username}
-                onChange={handleChange}
-                required 
-              />
-            </div>
-
-            <div className="input-group">
-              <label>Email Address</label>
-              <input 
-                type="email" 
-                name="email"
-                placeholder="name@company.com" 
-                value={formData.email}
-                onChange={handleChange}
-                required 
-              />
-            </div>
-
-            <div className="input-group">
-              <label>Password</label>
-              <input 
-                type="password" 
-                name="password"
-                placeholder="••••••••" 
-                value={formData.password}
-                onChange={handleChange}
-                required 
-              />
-            </div>
-
-            <button type="submit" className="auth-submit-btn" disabled={isLoading}>
-              {isLoading ? "Creating Account..." : "Create Account"}
-            </button>
-          </form>
-
-          <div className="auth-footer">
-            <p>Already have an account? <Link to="/login" className="text-red">Log in</Link></p>
+          <div className="form-group">
+            <label htmlFor="email">Email address</label>
+            <input 
+              type="email" 
+              id="email" 
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="you@company.com" 
+              required 
+            />
           </div>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input 
+              type="password" 
+              id="password" 
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Create a strong password" 
+              required 
+            />
+          </div>
+          
+          <button type="submit" className="btn-brand-solid auth-submit">Create account</button>
+        </form>
+
+        <div className="auth-footer">
+          Already have an account? <Link to="/login" className="auth-link">Log in</Link>
         </div>
       </div>
     </div>

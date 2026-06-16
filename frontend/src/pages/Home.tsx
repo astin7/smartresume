@@ -1,307 +1,250 @@
-import { motion, type Variants } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { useRef } from "react";
+import { Link } from "react-router-dom";
+import { motion, useScroll, useTransform, type Variants } from "framer-motion";
 
 export default function Home() {
-  // Animations
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+
+  const dashboardY = useTransform(scrollYProgress, [0, 0.5], [0, -40]);
+
   const fadeUp: Variants = {
-    offscreen: { opacity: 0, y: 60 },
+    offscreen: { opacity: 0, y: 30 },
     onscreen: { 
       opacity: 1, 
       y: 0, 
-      transition: { duration: 1.2, ease: [0.22, 1, 0.36, 1] } 
-    }
-  };
-
-  const staggerContainer: Variants = {
-    offscreen: { opacity: 0 },
-    onscreen: {
-      opacity: 1,
-      transition: { staggerChildren: 0.25, delayChildren: 0.1 }
+      transition: { type: "spring", bounce: 0.2, duration: 0.8 } 
     }
   };
 
   return (
-    <div className="home-architectural">
-
+    <div className="home-clean">
       {/* Navbar */}
-      <nav className="navbar">
-        <div className="nav-container">
-          <div className="nav-logo">ResumeAI</div>
-          <div className="nav-menu">
-            <a href="#features" className="nav-link">Features</a>
-            <a href="#how" className="nav-link">How It Works</a>
-            <a href="#pricing" className="nav-link">Pricing</a>
-          </div>
+      <nav className="navbar-clean">
+        <div className="nav-container-clean">
+          {/* Left Side: Branding */}
+          <Link to="/" className="nav-logo-clean">RESUMEAI</Link>
+
+          {/* Right Side: Action Button */}
           <div className="nav-actions">
-            <Link to="/signup" className="nav-btn-outline">Get Started ↗</Link>
+            <Link to="/login" className="nav-link-subtle">Log in</Link>
+            <Link to="/signup" className="btn-outline-dark">Get started free</Link>
           </div>
         </div>
       </nav>
 
-      {/* HERO */}
-      <section className="section-black hero-section">
+      {/* Hero Section */}
+      <section className="hero-clean" ref={heroRef}>
+        <div className="container text-center hero-content-clean">
+          <motion.h1 
+            className="hero-title-clean"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            Analyze Resumes <span className="highlight-pill">With Precision</span>
+          </motion.h1>
+
+          <motion.p 
+            className="hero-sub-clean"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            Stop guessing. Use industrial-grade AI to optimize your resume for high-growth tech roles. Get hired faster with data-driven insights.
+          </motion.p>
+
+          <motion.div 
+            className="hero-actions-clean"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <button className="btn-brand-solid">Get started free →</button>
+          </motion.div>
+        </div>
+
+        {/* Overlapping Dashboard Mockup */}
+        <motion.div className="dashboard-overlap-container" style={{ y: dashboardY }}>
+          <div className="dashboard-mockup-clean">
+            <div className="mockup-header">
+              <span className="mac-dot red"></span>
+              <span className="mac-dot yellow"></span>
+              <span className="mac-dot green"></span>
+              <div className="mockup-title">ResumeAI — Dashboard</div>
+            </div>
+            <div className="mockup-body">
+              {/* Abstract Representation of your dashboard */}
+              <div className="mockup-sidebar"></div>
+              <div className="mockup-main">
+                <div className="mockup-card top"></div>
+                <div className="mockup-grid">
+                  <div className="mockup-card"></div>
+                  <div className="mockup-card"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Dark Section (Logos) */}
+      <section className="dark-section-clean">
         <div className="container">
-          <div className="hero-split">
-            <motion.div 
-              initial="offscreen"
-              animate="onscreen"
-              variants={fadeUp}
-              className="hero-text-side"
-            >
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)', color: '#a1a1aa', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 600, marginBottom: '2.5rem' }}>
-                <span style={{ width: '6px', height: '6px', backgroundColor: '#e11d48', borderRadius: '50%' }}></span> 
-                In the making.
-              </div>
+          <div className="logo-ticker-clean">
+            <span className="logo-item">Google</span>
+            <span className="logo-item">Amazon</span>
+            <span className="logo-item">Tesla</span>
+            <span className="logo-item">CyberMonitor</span>
+            <span className="logo-item">Palantir</span>
+          </div>
+        </div>
+      </section>
 
-              <h1 className="hero-title">
-                Analyze Resumes <br />
-                <span className="text-red">With Precision.</span>
-              </h1>
-              <p className="hero-sub">
-                A deep dive into the engine that powers your next career move. We don't just check for spelling; we analyze your exact fit.
-              </p>
-            </motion.div>
+      {/* Feature Split Section */}
+      <section id="features" className="split-feature-section container">
+        <div className="split-content-left">
+          <motion.div variants={fadeUp} initial="offscreen" whileInView="onscreen" viewport={{ once: true }}>
+            <h2 className="section-title-clean">Built to beat the algorithm</h2>
+            <p className="section-sub-clean">
+              From contextual job matching to granular score reporting, ResumeAI has you covered.
+            </p>
 
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="hero-visual-side"
-            >
-              <div className="clean-window">
-                <div className="window-header">
-                  <span className="dot red"></span>
-                  <span className="dot yellow"></span>
-                  <span className="dot green"></span>
-                </div>
-                <div className="window-body">
-                  <div className="mock-line short"></div>
-                  <div className="mock-line long"></div>
-                  <div className="mock-line medium"></div>
-                  <div className="mock-box">Match: 94%</div>
+            <div className="feature-list-clean">
+              <div className="feature-item-clean">
+                <div className="feature-icon-clean">🎯</div>
+                <div>
+                  <h4>Contextual JD Alignment</h4>
+                  <p>Paste the exact job description. The AI scans your experience layer-by-layer to identify missing keywords.</p>
                 </div>
               </div>
-            </motion.div>
+              <div className="feature-item-clean">
+                <div className="feature-icon-clean">📊</div>
+                <div>
+                  <h4>Granular Score Reports</h4>
+                  <p>Specific subscores for ATS-readability, formatting, impact metrics, and technical keyword alignment.</p>
+                </div>
+              </div>
+              <div className="feature-item-clean">
+                <div className="feature-icon-clean">🌐</div>
+                <div>
+                  <h4>Live Internship Feed</h4>
+                  <p>Browse open Software Engineering roles and instantly analyze your resume against them with a single click.</p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+        
+        <div className="split-content-right">
+          <motion.div className="feature-image-mockup" variants={fadeUp} initial="offscreen" whileInView="onscreen" viewport={{ once: true }}>
+             {/* Add an actual image here later, currently a sleek placeholder */}
+          </motion.div>
+        </div>
+      </section>
 
+      {/* How it works (Timeline) */}
+      <section id="how-it-works" className="how-it-works-clean bg-light-gray">
+        <div className="container">
+          <div className="section-header-clean text-center">
+            <h2 className="section-title-clean">How it works</h2>
+            <p className="section-sub-clean">From blank page to accepted offer in three simple steps.</p>
           </div>
 
-          {/* Hero stats */}
-          <motion.div 
-            className="hero-stats-grid"
-            initial="offscreen"
-            whileInView="onscreen"
-            viewport={{ once: true, amount: 0.5 }}
-            variants={staggerContainer}
-          >
-            {[
-              { h2: "400+", p: "Resumes Optimized" },
-              { h2: "94%", p: "Interview Rate" },
-              { h2: "$1M+", p: "In Salary Offers" },
-              { h2: "24/7", p: "AI Availability" }
-            ].map((stat, i) => (
-              <motion.div key={i} variants={fadeUp} className="stat-cell">
-                <h2>{stat.h2}</h2>
-                <p>{stat.p}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Features (White Section) */}
-      <section id="features" className="section-white">
-        <div className="container">
-          <motion.div 
-            className="split-header"
-            initial="offscreen"
-            whileInView="onscreen"
-            viewport={{ once: true }}
-            variants={fadeUp}
-          >
-            <div className="header-text-side">
-              <h2>Built to beat<br/>the algorithm.</h2>
-              <p>The engine that powers your next career move.</p>
-              <Link to="/signup" className="black-btn">Get Started ↗</Link>
-            </div>
-            <div className="header-graphic-side">
-               <div className="wireframe-graphic dark-wire"></div>
-            </div>
-          </motion.div>
-
-          <motion.div 
-            className="flush-grid-2x2"
-            initial="offscreen"
-            whileInView="onscreen"
-            viewport={{ once: true, amount: 0.2 }}
-            variants={staggerContainer}
-          >
-            {[
-              { title: "Contextual JD Alignment", text: "Upload your resume and paste the exact job description. The AI scans your experience specifically against their requirements." },
-              { title: "Granular Score Reports", text: "Get an overall match score plus detailed subscores for formatting, keyword optimization, and technical alignment." },
-              { title: "Live Internship Feed", text: "Browse a live, auto-updating feed of open tech roles. Find a match and analyze your resume against it with one click." },
-              { title: "Detail & Specificity Check", text: "Stop using vague statements. The engine flags weak bullet points and guides you to quantify your achievements." }
-            ].map((feature, i) => (
-              <motion.div key={i} variants={fadeUp} className="grid-cell">
-                <h3 className="cell-title"><span className="cell-num">{i+1}.</span> {feature.title}</h3>
-                <p>{feature.text}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* How it works (black section) */}
-      <section id="how" className="section-black">
-        <div className="container">
-          <motion.div 
-            className="flush-grid-process"
-            initial="offscreen"
-            whileInView="onscreen"
-            viewport={{ once: true, amount: 0.2 }}
-            variants={staggerContainer}
-          >
-            <motion.div variants={fadeUp} className="grid-cell title-cell">
-              <h2>How It<br/>Works</h2>
-            </motion.div>
+          <div className="timeline-grid-clean">
+            <div className="timeline-line-clean"></div>
             
-            <motion.div variants={fadeUp} className="grid-cell process-graphic-cell">
-              <div className="flowchart">
-                <div className="flow-node"><div className="node-icon">📄</div><span>Parse</span></div>
-                <div className="flow-line"></div>
-                <div className="flow-node"><div className="node-icon">⚡</div><span>Analyze</span></div>
-                <div className="flow-line"></div>
-                <div className="flow-node"><div className="node-icon">🎯</div><span>Align</span></div>
-              </div>
-            </motion.div>
-
-            {/* Cell 1 */}
-            <motion.div variants={fadeUp} className="grid-cell process-desc-cell">
-              <span className="cell-num">1.</span>
-              <h4>Find a Role</h4>
+            <motion.div className="timeline-step" variants={fadeUp} initial="offscreen" whileInView="onscreen" viewport={{ once: true }}>
+              <div className="step-number-clean">1</div>
+              <h3>Find a Role</h3>
               <p>Browse our live feed of tech internships or manually paste a job description from any site.</p>
             </motion.div>
 
-            {/* Cell 2 */}
-            <motion.div variants={fadeUp} className="grid-cell process-desc-cell">
-              <span className="cell-num">2.</span>
-              <h4>Upload & Scan</h4>
+            <motion.div className="timeline-step" variants={fadeUp} initial="offscreen" whileInView="onscreen" viewport={{ once: true, amount: 0.2 }}>
+              <div className="step-number-clean">2</div>
+              <h3>Upload & Scan</h3>
               <p>Drop in your resume PDF. Our AI reads it exactly like a corporate Applicant Tracking System (ATS) would.</p>
             </motion.div>
 
-            {/* Cell 3 */}
-            <motion.div variants={fadeUp} className="grid-cell process-desc-cell">
-              <span className="cell-num">3.</span>
-              <h4>Fix & Dominate</h4>
+            <motion.div className="timeline-step" variants={fadeUp} initial="offscreen" whileInView="onscreen" viewport={{ once: true, amount: 0.4 }}>
+              <div className="step-number-clean">3</div>
+              <h3>Fix & Dominate</h3>
               <p>Get your alignment score and follow the exact instructions to rewrite weak bullet points before you apply.</p>
             </motion.div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/*  Pricing header (red section) */}
-      <section id="pricing" className="section-red">
-        <div className="container">
-          <motion.div 
-            className="split-header"
-            initial="offscreen"
-            whileInView="onscreen"
-            viewport={{ once: true }}
-            variants={fadeUp}
-          >
-            <div className="header-text-side">
-              <h2>Ready to get hired?</h2>
-              <p>Choose the plan that fits your career goals.</p>
-              <Link to="/signup" className="outline-btn-white">Go Pro ↗</Link>
-            </div>
-            <div className="header-graphic-side">
-               <div className="wireframe-graphic white-wire"></div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      {/* Pricing / Loved by Teams */}
+      <section id="pricing" className="pricing-section-clean container">
+         <div className="section-header-clean text-center">
+            <h2 className="section-title-clean">Ready to get hired?</h2>
+            <p className="section-sub-clean">Choose the plan that fits your career goals.</p>
+          </div>
 
-      {/* Pricing cards (white section) */}
-      <section className="section-white pricing-cards-section">
-        <div className="container">
-          <motion.div 
-            className="pricing-centered-header"
-            initial="offscreen"
-            whileInView="onscreen"
-            viewport={{ once: true }}
-            variants={fadeUp}
-          >
-            <span className="pricing-eyebrow">The ROI of You</span>
-            <h2 className="pricing-catchy-title">Invest in Your <br /><span className="text-gradient-red">Next Offer.</span></h2>
-            <p className="pricing-catchy-sub">Start optimizing for free. Go Pro when you're ready to completely dominate the applicant pool.</p>
-          </motion.div>
-
-          <motion.div 
-            className="pricing-grid"
-            initial="offscreen"
-            whileInView="onscreen"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={staggerContainer}
-          >
-            <motion.div variants={fadeUp} className="pricing-card">
-              <div className="tier-name">Free</div>
-              <div className="price">$0<span>/mo</span></div>
-              <ul className="tier-features">
-                <li>3 AI Resume Scans to Try Out</li>
+          <div className="pricing-grid-clean">
+            {/* Free */}
+            <motion.div className="pricing-card-clean" variants={fadeUp} initial="offscreen" whileInView="onscreen" viewport={{ once: true }}>
+              <div className="tier-header-clean">
+                <h4>Free</h4>
+                <div className="price-clean">$0<span>/mo</span></div>
+              </div>
+              <ul className="tier-features-clean">
+                <li>3 AI Resume Scans / mo</li>
                 <li>Basic Formatting Check</li>
                 <li>Limited Job Feed Access</li>
               </ul>
-              <Link to="/signup" className="outline-btn-black pricing-btn">Get Started</Link>
             </motion.div>
 
-            <motion.div variants={fadeUp} className="pricing-card featured-card">
-              <div className="popular-badge">Most Popular</div>
-              <div className="tier-name">Pro</div>
-              <div className="price">$19.99<span>/mo</span></div>
-              <ul className="tier-features">
+            {/* Pro */}
+            <motion.div className="pricing-card-clean" variants={fadeUp} initial="offscreen" whileInView="onscreen" viewport={{ once: true, delay: 0.1 }}>
+              <div className="tier-header-clean">
+                <h4>Pro</h4>
+                <div className="price-clean">$20<span>/mo</span></div>
+              </div>
+              <ul className="tier-features-clean">
                 <li>Unlimited AI Resume Scans</li>
                 <li>Deep JD Alignment Analysis</li>
                 <li>Full Live Internship Feed</li>
                 <li>Bullet Point Rewriter</li>
               </ul>
-              <Link to="/signup" className="primary-btn pricing-btn">Go Pro</Link>
             </motion.div>
-          </motion.div>
+          </div>
+      </section>
+
+      {/* Giant Orange CTA */}
+      <section className="bottom-cta-clean">
+        <div className="container text-center">
+          <h2 className="cta-title">Ready to transform your career?</h2>
+          <p className="cta-sub">Join ambitious engineers already using ResumeAI to land their dream roles. Start for free — no credit card required.</p>
+          <button className="btn-white-solid">Get started free →</button>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="footer-goji">
-        <div className="container">
-          <motion.div 
-            className="footer-content"
-            initial="offscreen"
-            whileInView="onscreen"
-            viewport={{ once: true }}
-            variants={fadeUp}
-          >
-            <div className="footer-cta-area">
-              <h2 className="footer-huge-text">Give it a Shot</h2>
-              <Link to="/signup" className="nav-btn-outline footer-main-btn">Get Started ↗</Link>
+      <footer className="footer-clean">
+        <div className="container footer-flex">
+          <div className="footer-brand-clean">
+            <h4 className="nav-logo-clean">RESUMEAI</h4>
+            <p>The modern career growth platform for ambitious engineers.</p>
+            <p className="copyright">© 2026 ResumeAI. All rights reserved.</p>
+          </div>
+          <div className="footer-links-clean">
+            <div className="link-group">
+              <h5>PRODUCT</h5>
+              <a href="#features">Features</a>
+              <a href="#pricing">Pricing</a>
+              <a href="/demo">Demo</a>
             </div>
-
-            <div className="footer-divider"></div>
-
-            <div className="footer-bottom-bar">
-              <div className="footer-left">
-                <div className="footer-socials">
-                  <a href="#" className="social-link">LinkedIn</a>
-                  <a href="#" className="social-link">X</a>
-                  <a href="#" className="social-link">Instagram</a>
-                </div>
-              </div>
-              <div className="footer-center">
-                <p>© 2026 ResumeAI | <a href="#">Privacy & Terms</a></p>
-              </div>
-              <div className="footer-right">
-                <a href="mailto:resumeai@gmail.com" className="footer-contact">resumeai@gmail.com</a>
-              </div>
+            <div className="link-group">
+              <h5>COMPANY</h5>
+              <a href="/about">About</a>
+              <a href="/privacy">Privacy</a>
+              <a href="/terms">Terms</a>
             </div>
-          </motion.div>
+          </div>
         </div>
       </footer>
     </div>
