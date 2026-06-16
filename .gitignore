@@ -1,0 +1,4 @@
+# Ignore Claw Code local session data and local configuration settings
+.claw/sessions/
+.claw/settings.local.json
+.claw/worker-state.json
