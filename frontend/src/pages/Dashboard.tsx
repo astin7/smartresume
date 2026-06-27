@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { API } from "../services/api";
+import ResumeUpload from "../components/ResumeUpload";
 import "./Dashboard.css";
 
 export default function Dashboard() {
@@ -9,19 +10,31 @@ export default function Dashboard() {
   // Create state to hold the real data from the database
   const [userData, setUserData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  
+  // State to toggle the drag-and-drop zone
+  const [showUpload, setShowUpload] = useState(false);
 
   // When the dashboard loads, fetch the user's data
   useEffect(() => {
+    // 1. Instantly load from local storage so the UI is immediately ready
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      setUserData(JSON.parse(savedUser));
+      setLoading(false);
+    }
+
+    // 2. Double-check with the database in the background (Security & Syncing)
     const fetchProfile = async () => {
       try {
-        // Change '/auth/me' to whatever your backend route is for fetching user details
         const response = await API.get('/api/auth/me');
-        console.log("Raw Backend Data:", response.data); // <-- Add this!
         setUserData(response.data);
+        
+        // Keep local storage perfectly in sync with the database
+        localStorage.setItem("user", JSON.stringify(response.data));
       } catch (error) {
         console.error("Failed to fetch user data", error);
-        // If the token is invalid or expired, clear it and kick them to login
         localStorage.removeItem("token");
+        localStorage.removeItem("user");
         navigate("/login");
       } finally {
         setLoading(false);
@@ -36,7 +49,7 @@ export default function Dashboard() {
     return <div style={{ padding: '3rem', textAlign: 'center' }}>Loading your dashboard...</div>;
   }
 
-  // Get the first initial for the avatar (e.g., "Astin" -> "A")
+  // Get the first initial for the avatar
   const initial = userData?.name ? userData.name.charAt(0).toUpperCase() : "?";
 
   return (
@@ -44,7 +57,7 @@ export default function Dashboard() {
       
       {/* Sidebar Navigation */}
       <aside className="dash-sidebar">
-        <Link to="/" className="dash-logo">EVEREST</Link>
+        <Link to="/" className="dash-logo">SMARTRESUME</Link>
         
         <nav className="dash-nav">
           <Link to="/dashboard" className="dash-nav-item active">Overview</Link>
@@ -69,16 +82,20 @@ export default function Dashboard() {
       {/* Main Content Dashboard */}
       <main className="dash-main">
         <header className="dash-header">
-          {/* Dynamically insert their actual name */}
           <h1>Welcome back, {userData?.name?.split(' ')[0] || "there"}</h1>
-          <button className="btn-brand-solid">+ New Analysis</button>
+          {/* 1. Wired up the Header Button */}
+          <button 
+            className="btn-brand-solid" 
+            onClick={() => setShowUpload(true)}
+          >
+            + New Analysis
+          </button>
         </header>
 
         {/* Top Stats */}
         <div className="dash-stats-grid">
           <div className="stat-card">
             <div className="stat-title">Total Scans</div>
-            {/* Replace with real dynamic data once you have resumes saving in the DB */}
             <div className="stat-value">{userData?.scans || 0}</div>
           </div>
           <div className="stat-card">
@@ -91,12 +108,41 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Recent Activity */}
-        <h2 className="dash-section-title">Recent Analyses</h2>
-        <div className="content-card">
-          <p>You haven't analyzed any resumes yet this week.</p>
-          <button className="btn-outline-dark">Upload Resume</button>
-        </div>
+        {/* Recent Activity / Upload Zone Toggle */}
+        <h2 className="dash-section-title">
+          {showUpload ? "New Analysis" : "Recent Analyses"}
+        </h2>
+        
+        {/* 2. The Conditional Render for the Upload Zone */}
+        {showUpload ? (
+          <div className="content-card">
+             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+               <h3 style={{ margin: 0, color: '#1e293b' }}>Upload a new resume</h3>
+               <button 
+                 className="btn-outline-dark" 
+                 style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem' }}
+                 onClick={() => setShowUpload(false)}
+               >
+                 Cancel
+               </button>
+             </div>
+             {/* This renders your new Drag and Drop component */}
+             <ResumeUpload />
+          </div>
+        ) : (
+          <div className="content-card">
+            <p style={{ color: '#64748b', marginBottom: '1rem' }}>
+              You haven't analyzed any resumes yet this week.
+            </p>
+            {/* 3. Wired up the Empty State Button */}
+            <button 
+              className="btn-outline-dark"
+              onClick={() => setShowUpload(true)}
+            >
+              Upload Resume
+            </button>
+          </div>
+        )}
       </main>
 
     </div>

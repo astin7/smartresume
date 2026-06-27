@@ -34,6 +34,8 @@ export default function Signup() {
       // Save the token the backend just generated for us
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
+
+        localStorage.setItem("user", JSON.stringify(response.data.user));
       }
 
       // Shoot straight to the dashboard!
@@ -50,7 +52,7 @@ export default function Signup() {
     <div className="auth-layout">
       <div className="auth-card">
         <div className="auth-header">
-          <Link to="/" className="auth-logo">EVEREST</Link>
+          <Link to="/" className="auth-logo">SMARTRESUME</Link>
           <h1>Create an account</h1>
           <p>Start optimizing your resume for free.</p>
         </div>

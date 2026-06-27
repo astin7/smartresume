@@ -3,6 +3,7 @@ const cors = require("cors");
 const analysisRoutes = require("./routes/analysis.routes");
 const joblistRoutes = require("./routes/joblist.routes");
 const authRoutes = require("./routes/auth.routes");
+const resumeRoutes = require('./routes/resume.routes');
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use((req, res, next) => {
 app.use("/api/analysis", analysisRoutes);
 app.use("/api/joblist", joblistRoutes);
 app.use("/api/auth", authRoutes);
+app.use('/api/resume', resumeRoutes);
 
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "running" });

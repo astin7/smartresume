@@ -32,6 +32,8 @@ export default function Login() {
       // Optional: If your backend sends back a JWT token, save it to localStorage
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
+
+        localStorage.setItem("user", JSON.stringify(response.data.user));
       }
 
       // Redirect to the dashboard upon success
