@@ -21,9 +21,9 @@
     "mongodb": "^7.3.0",
     "mongoose": "^9.1.5",
     "multer": "^2.2.0",
-    "pdf-parse": "^2.4.5",
     "pdf-parse-fork": "^1.2.0",
-    "pdf-to-text": "^0.0.7"
+    "pdf-to-text": "^0.0.7",
+    "pdf2json": "^4.0.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"

@@ -26,7 +26,7 @@ export default function Home() {
       <nav className="navbar-clean">
         <div className="nav-container-clean">
           {/* Left Side: Branding */}
-          <Link to="/" className="nav-logo-clean">EVEREST</Link>
+          <Link to="/" className="nav-logo-clean">SMARTRESUME</Link>
 
           {/* Right Side: Action Button */}
           <div className="nav-actions">
@@ -73,7 +73,7 @@ export default function Home() {
               <span className="mac-dot red"></span>
               <span className="mac-dot yellow"></span>
               <span className="mac-dot green"></span>
-              <div className="mockup-title">EVEREST — Dashboard</div>
+              <div className="mockup-title">SMARTRESUME — Dashboard</div>
             </div>
             <div className="mockup-body">
               {/* Abstract Representation of your dashboard */}
@@ -109,7 +109,7 @@ export default function Home() {
           <motion.div variants={fadeUp} initial="offscreen" whileInView="onscreen" viewport={{ once: true }}>
             <h2 className="section-title-clean">Built to beat the algorithm</h2>
             <p className="section-sub-clean">
-              From contextual job matching to granular score reporting, EVEREST has you covered.
+              From contextual job matching to granular score reporting, SMARTRESUME has you covered.
             </p>
 
             <div className="feature-list-clean">
@@ -218,7 +218,7 @@ export default function Home() {
       <section className="bottom-cta-clean">
         <div className="container text-center">
           <h2 className="cta-title">Ready to transform your career?</h2>
-          <p className="cta-sub">Join ambitious engineers already using EVEREST to land their dream roles. Start for free — no credit card required.</p>
+          <p className="cta-sub">Join ambitious engineers already using SMARTRESUME to land their dream roles. Start for free — no credit card required.</p>
           <button className="btn-white-solid">Get started free →</button>
         </div>
       </section>
@@ -227,9 +227,9 @@ export default function Home() {
       <footer className="footer-clean">
         <div className="container footer-flex">
           <div className="footer-brand-clean">
-            <h4 className="nav-logo-clean">EVEREST</h4>
+            <h4 className="nav-logo-clean">SMARTRESUME</h4>
             <p>The modern career growth platform for ambitious engineers.</p>
-            <p className="copyright">© 2026 EVEREST. All rights reserved.</p>
+            <p className="copyright">© 2026 SMARTRESUME. All rights reserved.</p>
           </div>
           <div className="footer-links-clean">
             <div className="link-group">
