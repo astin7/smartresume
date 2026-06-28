@@ -23,7 +23,10 @@ const userSchema = new mongoose.Schema(
         settings: {
             targetRole: { type: String, default: "Software Engineer" },
             theme: { type: String, default: "dark" }
-        }
+        },
+        resumeText: { type: String, default: "" },
+        scans: { type: Number, default: 0 },
+
     },
     { 
         timestamps: true 

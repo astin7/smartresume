@@ -1,6 +1,11 @@
 const express = require("express");
 const multer = require("multer");
-const PDFParser = require("pdf2json"); // The modern replacement!
+const PDFParser = require("pdf2json");
+const User = require("../models/User");
+
+// 1. FIXED: Import the default export from your middleware file
+const authMiddleware = require("../middleware/auth.middleware"); 
+
 const router = express.Router();
 
 const storage = multer.memoryStorage();
@@ -16,41 +21,46 @@ const upload = multer({
   }
 });
 
-router.post("/upload", upload.single("resumePdf"), (req, res) => {
+// 2. FIXED: Use authMiddleware here to protect the route
+router.post("/upload", authMiddleware, upload.single("resumePdf"), (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
     
-    console.log("File received:", req.file.originalname);
+    console.log("File received from user:", req.user.name);
 
-    // --- THE NEW EXTRACTION ENGINE ---
-    // The '1' flag tells the parser we only care about the raw text
     const pdfParser = new PDFParser(this, 1);
 
-    // 1. What happens if the parser fails
     pdfParser.on("pdfParser_dataError", (errData) => {
       console.error("PDF Parsing Error:", errData.parserError);
       return res.status(500).json({ message: "Error extracting text from PDF" });
     });
 
-    // 2. What happens when the parser successfully reads the file
-    pdfParser.on("pdfParser_dataReady", () => {
-      // Grab the raw text!
+    // Make this callback async so we can talk to MongoDB
+    pdfParser.on("pdfParser_dataReady", async () => {
       const extractedText = pdfParser.getRawTextContent();
       
-      console.log("--- EXTRACTED TEXT PREVIEW ---");
-      console.log(extractedText.substring(0, 200) + "...\n------------------------------");
+      try {
+        // Save the text to the logged-in user and increment their scan count!
+        await User.findByIdAndUpdate(req.user._id, {
+            resumeText: extractedText,
+            $inc: { scans: 1 }
+        });
 
-      // Send the text back to the frontend
-      return res.status(200).json({ 
-        message: "Resume successfully parsed!",
-        fileName: req.file.originalname,
-        textPreview: extractedText.substring(0, 500) 
-      });
+        console.log("Successfully saved resume to database for:", req.user.email);
+
+        return res.status(200).json({ 
+          message: "Resume successfully parsed and saved to profile!",
+          fileName: req.file.originalname
+        });
+
+      } catch (dbError) {
+        console.error("Database Error:", dbError);
+        return res.status(500).json({ message: "Parsed, but failed to save to database." });
+      }
     });
 
-    // 3. Feed the memory buffer into the parser to start the process
     pdfParser.parseBuffer(req.file.buffer);
 
   } catch (error) {

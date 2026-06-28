@@ -4,7 +4,9 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 exports.runAIAnalysis = async (resumeText, jobDescription) => {
     // Initializing inside the function ensures process.env is ready
     const gen = new GoogleGenerativeAI(process.env.AI_API_KEY);
-    const model = gen.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+    
+    // CHANGED: Upgraded to the modern 3.5 series model to fix the 404 deprecation error
+    const model = gen.getGenerativeModel({ model: "gemini-3.5-flash" });
     
     const prompt = `
     You are a resume analysis expert. 

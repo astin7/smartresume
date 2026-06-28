@@ -1,15 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const Analysis = require("../models/Analysis");
+const User = require("../models/User"); 
 const authMiddleware = require("../middleware/auth.middleware");
-const fileHandler = require("../middleware/upload.middleware"); 
 
-// Using the fork that works with modern Node (v25)
-const pdf = require("pdf-parse-fork");
-// Importing the function from the analysis controller
 const { createAnalysis } = require("../controllers/analysis.controller");
 
-// Get all past analyses for the logged-in user
 router.get("/", authMiddleware, async (req, res) => {
     try {
         const history = await Analysis.find({ user: req.user._id }).sort({ createdAt: -1 });
@@ -20,23 +16,39 @@ router.get("/", authMiddleware, async (req, res) => {
     }
 });
 
-// The Upload + Analysis Route
-router.post("/", authMiddleware, fileHandler.single("resume"), async (req, res) => {
+// --- THE NEW ROUTE ---
+router.post("/compare", authMiddleware, async (req, res) => {
+    // 1. A LOUD CONSOLE LOG TO PROVE WE MADE IT HERE
+    console.log("\n========================================");
+    console.log("🚀 /api/analysis/compare ROUTE HIT!");
+    console.log("========================================\n");
+
     try {
-        const { jobDescription, jobTitle } = req.body;
+        const { jobDescription } = req.body;
 
-        if (!req.file) return res.status(400).json({ error: "Please upload a PDF resume." });
-        if (!jobDescription) return res.status(400).json({ error: "Missing job description." });
+        if (!jobDescription) {
+            return res.status(400).json({ error: "Missing job description." });
+        }
 
-        const pdfData = await pdf(req.file.buffer);
-        req.body.resumeText = pdfData.text;
+        const user = await User.findById(req.user._id);
+        
+        if (!user || !user.resumeText) {
+            console.log("❌ No resume text found in database for user!");
+            return res.status(400).json({ error: "No resume found. Please upload a resume first." });
+        }
 
-        // Call the exported controller function
+        console.log("✅ Successfully retrieved saved resume text from database.");
+
+        // Attach the saved resume text to the request body for the controller
+        req.body.resumeText = user.resumeText;
+
+        // Hand off to your existing AI controller
+        console.log("🤖 Handing data off to AI Controller...");
         return createAnalysis(req, res);
 
     } catch (error) {
         console.error("ANALYSIS ROUTE ERROR:", error);
-        res.status(500).json({ error: "AI Analysis or PDF parsing failed." });
+        res.status(500).json({ error: "Analysis configuration failed." });
     }
 });
 

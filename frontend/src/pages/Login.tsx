@@ -50,7 +50,7 @@ export default function Login() {
     <div className="auth-layout">
       <div className="auth-card">
         <div className="auth-header">
-          <Link to="/" className="auth-logo">EVEREST</Link>
+          <Link to="/" className="auth-logo">SMARTRESUME</Link>
           <h1>Welcome back</h1>
           <p>Log in to access your dashboard.</p>
         </div>
