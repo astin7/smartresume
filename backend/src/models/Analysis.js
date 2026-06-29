@@ -1,37 +1,40 @@
 const mongoose = require("mongoose");
 
 const AnalysisSchema = new mongoose.Schema({
-    user:{
+    user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
     },
-    jobTitle:{
+    jobTitle: {
         type: String,
         required: true,
     },
-    jobDescription:{
+    jobDescription: {
         type: String,
         required: true,
     },
-    resumeText:{
+    resumeText: {
         type: String,
         required: true,
     },
-    applicantSkills:{
+    applicantSkills: {
         type: [String],
         default: null
     },
-    postingSkills:{
-        type:[String],
+    postingSkills: {
+        type: [String],
         default: null,
     },
-    analysisScore:{
+    analysisScore: {
         type: Number,
         default: null,
     },
-    formatting:{
+    formatting: {
         type: Number,
     }
+}, { 
+    timestamps: true
 });
+
 module.exports = mongoose.model("Analysis", AnalysisSchema);
