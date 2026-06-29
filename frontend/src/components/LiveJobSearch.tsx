@@ -13,12 +13,25 @@ interface LiveJob {
 
 export default function LiveJobSearch() {
   const [what, setWhat] = useState("");
-  const [company, setCompany] = useState(""); // NEW STATE
+  const [company, setCompany] = useState("");
   const [where, setWhere] = useState("Florida");
   const [jobType, setJobType] = useState("any");
   const [jobs, setJobs] = useState<LiveJob[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  
+  // Tracks which jobs have been saved in this session
+  const [savedJobIds, setSavedJobIds] = useState<Set<string>>(new Set());
+
+  const handleSaveJob = async (job: LiveJob) => {
+    try {
+      await API.post("/api/saved-jobs", job);
+      // Update state so the UI turns the heart red instantly
+      setSavedJobIds(prev => new Set(prev).add(job.id));
+    } catch (err) {
+      console.error("Failed to save job", err);
+    }
+  };
 
   const handleSearch = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -32,7 +45,6 @@ export default function LiveJobSearch() {
       
       const typeParam = jobType === "full_time" ? "full_time" : "";
 
-      // NEW: Added company to the API call
       const response = await API.get(
         `/api/search?what=${encodeURIComponent(finalWhat)}&where=${encodeURIComponent(where)}&type=${typeParam}&company=${encodeURIComponent(company)}`
       );
@@ -67,7 +79,7 @@ export default function LiveJobSearch() {
           backgroundColor: "white",
           boxShadow: "0 3px 12px rgba(0,0,0,0.08)",
           marginBottom: "3rem",
-          maxWidth: "1000px", // WIDENED to accommodate the new input
+          maxWidth: "1000px",
           margin: "0 auto 3rem auto"
         }}
       >
@@ -86,7 +98,7 @@ export default function LiveJobSearch() {
         
         <div style={{ width: "1px", height: "32px", backgroundColor: "#DDDDDD", margin: "0 16px" }}></div>
         
-        {/* Section 2: Company (NEW) */}
+        {/* Section 2: Company */}
         <div style={{ flex: "1", display: "flex", flexDirection: "column", justifyContent: "center" }}>
           <label style={{ fontSize: "12px", fontWeight: "800", color: "#222222", marginBottom: "2px", letterSpacing: "0.5px" }}>
             Company
@@ -186,11 +198,42 @@ export default function LiveJobSearch() {
                 </div>
               </div>
 
+              {/* UPDATED: Flex container with Heart Icon & Apply Link */}
               <div style={{ borderTop: "1px solid #DDDDDD", paddingTop: "16px", marginTop: "20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ color: "#717171", fontSize: "12px" }}>{job.postedAt}</span>
-                <a href={job.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", color: "#222222", fontWeight: "600", fontSize: "14px", textDecorationLine: "underline" }}>
-                  Apply Now
-                </a>
+                
+                <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                  <button 
+                    onClick={() => handleSaveJob(job)}
+                    disabled={savedJobIds.has(job.id)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      cursor: savedJobIds.has(job.id) ? "default" : "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "0"
+                    }}
+                    title="Save Job"
+                  >
+                    <svg 
+                      viewBox="0 0 32 32" 
+                      style={{ 
+                        height: "20px", 
+                        width: "20px", 
+                        fill: savedJobIds.has(job.id) ? "#E51D53" : "none", // Turns solid red when saved
+                        stroke: savedJobIds.has(job.id) ? "#E51D53" : "#222222", 
+                        strokeWidth: "2" 
+                      }}
+                    >
+                      <path d="M16 28.27l-2.31-2.1C6.4 19.54 2 15.54 2 10.5 2 6.36 5.36 3 9.5 3c2.36 0 4.62 1.09 6.5 2.84C17.88 4.09 20.14 3 22.5 3 26.64 3 30 6.36 30 10.5c0 5.04-4.4 9.04-11.69 15.67L16 28.27z" />
+                    </svg>
+                  </button>
+                  <a href={job.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", color: "#222222", fontWeight: "600", fontSize: "14px", textDecorationLine: "underline" }}>
+                    Apply Now
+                  </a>
+                </div>
               </div>
             </div>
           ))}
