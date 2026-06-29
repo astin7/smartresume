@@ -4,8 +4,8 @@ const authMiddleware = require("../middleware/auth.middleware");
 
 router.get("/", authMiddleware, async (req, res) => {
     try {
-        // Added 'company' to the incoming query parameters
-        const { what, where, type, company } = req.query;
+        // NEW: Extracted 'page' from the query parameters
+        const { what, where, type, company, page } = req.query;
         
         const appId = process.env.ADZUNA_APP_ID;
         const appKey = process.env.ADZUNA_APP_KEY;
@@ -19,7 +19,7 @@ router.get("/", authMiddleware, async (req, res) => {
             app_id: appId,
             app_key: appKey,
             results_per_page: "20",
-            what: what || "" // Fallback to empty string if searching only by company
+            what: what || ""
         });
 
         const isCountrywide = !where || where.toLowerCase() === "united states" || where.toLowerCase() === "us";
@@ -29,14 +29,17 @@ router.get("/", authMiddleware, async (req, res) => {
 
         if (type === 'full_time') params.append('full_time', '1');
 
-        // NEW: Append the company parameter if the user typed one
         if (company && company.trim() !== "") {
             params.append('company', company.trim());
         }
 
-        const url = `https://api.adzuna.com/v1/api/jobs/us/search/1?${params.toString()}`;
+        // NEW: Default to page 1 if the frontend doesn't provide it
+        const currentPage = parseInt(page) || 1;
+
+        // NEW: Inject the dynamic currentPage into the Adzuna URL path
+        const url = `https://api.adzuna.com/v1/api/jobs/us/search/${currentPage}?${params.toString()}`;
         
-        console.log(`🔍 Searching Adzuna: what="${what || 'any'}", company="${company || 'any'}", where="${isCountrywide ? 'US' : where}"`);
+        console.log(`🔍 Searching Adzuna (Page ${currentPage}): what="${what || 'any'}", company="${company || 'any'}", where="${isCountrywide ? 'US' : where}"`);
 
         const response = await fetch(url, {
             headers: {
