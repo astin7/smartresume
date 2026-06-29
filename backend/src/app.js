@@ -4,7 +4,7 @@ const analysisRoutes = require("./routes/analysis.routes");
 const joblistRoutes = require("./routes/joblist.routes"); 
 const authRoutes = require("./routes/auth.routes");
 const resumeRoutes = require('./routes/resume.routes');
-const resumeRoutes = require('./routes/resume.routes');
+const searchRoutes = require("./routes/search.routes");
 
 const app = express();
 
@@ -26,11 +26,10 @@ app.use((req, res, next) => {
 
 // Routes
 app.use("/api/analysis", analysisRoutes);
-// --- FIXED: Make sure this route matches what the frontend is calling ---
 app.use("/api/joblist", joblistRoutes);
 app.use("/api/auth", authRoutes);
 app.use('/api/resume', resumeRoutes);
-app.use('/api/resume', resumeRoutes);
+app.use("/api/search", searchRoutes);
 
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "running" });

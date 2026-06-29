@@ -1,12 +1,13 @@
 import "./Dashboard.css";
 import { useState, useEffect } from "react";
-// 1. Fixed the duplicate imports here
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { API } from "../services/api";
 
 import ResumeUpload from "../components/ResumeUpload";
 import DashboardHistory from "../components/DashboardHistory";
 import JobTracker from "../components/JobTracker"; 
+import MyResumes from '../components/MyResumes';
+import LiveJobSearch from '../components/LiveJobSearch';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -19,8 +20,11 @@ export default function Dashboard() {
   // State to toggle the drag-and-drop zone
   const [showUpload, setShowUpload] = useState(false);
   
-  // 2. Check if we are currently on the Job Tracker page
+  // 1. UPDATED ROUTING CHECKS: We now check exactly which page we are on
   const isJobTracker = location.pathname === "/dashboard/jobs";
+  const isResumes = location.pathname === "/dashboard/resumes";
+  const isOverview = location.pathname === "/dashboard" || location.pathname === "/dashboard/";
+  const isSearch = location.pathname === "/dashboard/search";
 
   // When the dashboard loads, fetch the user's data
   useEffect(() => {
@@ -31,13 +35,11 @@ export default function Dashboard() {
       setLoading(false);
     }
 
-    // Double-check with the database in the background (Security & Syncing)
+    // Double-check with the database in the background
     const fetchProfile = async () => {
       try {
         const response = await API.get('/api/auth/me');
         setUserData(response.data);
-        
-        // Keep local storage perfectly in sync with the database
         localStorage.setItem("user", JSON.stringify(response.data));
       } catch (error) {
         console.error("Failed to fetch user data", error);
@@ -52,12 +54,10 @@ export default function Dashboard() {
     fetchProfile();
   }, [navigate]);
 
-  // Show a loading screen while we wait for the database
   if (loading) {
     return <div style={{ padding: '3rem', textAlign: 'center' }}>Loading your dashboard...</div>;
   }
 
-  // Get the first initial for the avatar
   const initial = userData?.name ? userData.name.charAt(0).toUpperCase() : "?";
 
   return (
@@ -68,10 +68,11 @@ export default function Dashboard() {
         <Link to="/" className="dash-logo">SMARTRESUME</Link>
         
         <nav className="dash-nav">
-          {/* 3. Updated sidebar links to highlight dynamically */}
-          <Link to="/dashboard" className={`dash-nav-item ${!isJobTracker ? "active" : ""}`}>Overview</Link>
-          <Link to="/dashboard/resumes" className="dash-nav-item">My Resumes</Link>
+          {/* 2. UPDATED SIDEBAR: The active class now strictly follows the URL */}
+          <Link to="/dashboard" className={`dash-nav-item ${isOverview ? "active" : ""}`}>Overview</Link>
+          <Link to="/dashboard/resumes" className={`dash-nav-item ${isResumes ? "active" : ""}`}>My Resumes</Link>
           <Link to="/dashboard/jobs" className={`dash-nav-item ${isJobTracker ? "active" : ""}`}>Job Tracker</Link>
+          <Link to="/dashboard/search" className={`dash-nav-item ${isSearch ? "active" : ""}`}>Live Job Search</Link>
           <Link to="/settings" className="dash-nav-item">Settings</Link>
         </nav>
 
@@ -90,10 +91,13 @@ export default function Dashboard() {
 
       {/* Main Content Dashboard */}
       <main className="dash-main">
-        {/* 4. Conditionally render either the Job Tracker OR the Overview */}
-        {isJobTracker ? (
-          <JobTracker />
-        ) : (
+
+        {/* 3. UPDATED MAIN CONTENT RENDER: Dynamically show components based on the URL */}
+        {isJobTracker && <JobTracker />}
+        {isResumes && <MyResumes />}
+        {isSearch && <LiveJobSearch />}
+        
+        {isOverview && (
           <>
             <header className="dash-header">
               <h1>Welcome back, {userData?.name?.split(' ')[0] || "there"}</h1>

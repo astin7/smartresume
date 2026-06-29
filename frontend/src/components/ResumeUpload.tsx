@@ -1,13 +1,19 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { API } from "../services/api"; 
 import "./ResumeUpload.css"; 
 
-// Define what our API response looks like
 interface AnalysisResult {
   analysisScore: number;
   applicantSkills: string[];
   postingSkills: string[];
   missingSkills: string[];
+}
+
+// NEW: Blueprint for saved resume items
+interface SavedResume {
+  _id: string;
+  fileName: string;
+  isPrimary: boolean;
 }
 
 export default function ResumeUpload() {
@@ -17,14 +23,46 @@ export default function ResumeUpload() {
   const [jobTitle, setJobTitle] = useState("");
   const [results, setResults] = useState<AnalysisResult | null>(null);
   
-  // --- File State ---
+  // --- File / Vault State ---
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   
+  // NEW: State to track saved resumes from the vault
+  const [savedResumes, setSavedResumes] = useState<SavedResume[]>([]);
+  const [selectedResumeId, setSelectedResumeId] = useState<string>("");
+  const [useUploadedFile, setUseUploadedFile] = useState<boolean>(false);
+  
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // NEW: Automatically check the database vault when the page opens
+  useEffect(() => {
+    const fetchVaultResumes = async () => {
+      try {
+        const response = await API.get("/api/resume");
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          setSavedResumes(response.data);
+          
+          // Pre-select whichever resume is marked primary
+          const primary = response.data.find((r: SavedResume) => r.isPrimary);
+          if (primary) {
+            setSelectedResumeId(primary._id);
+          } else {
+            setSelectedResumeId(response.data[0]._id);
+          }
+        } else {
+          // If the vault is completely empty, default to drag-and-drop mode
+          setUseUploadedFile(true);
+        }
+      } catch (err) {
+        console.error("Failed to load vault items inside wizard:", err);
+        setUseUploadedFile(true); // Fallback to drag-and-drop if API fails
+      }
+    };
+    fetchVaultResumes();
+  }, [step]);
 
   const showToast = (message: string, type: 'success' | 'error') => {
     setToast({ message, type });
@@ -56,8 +94,15 @@ export default function ResumeUpload() {
 
   const triggerFileInput = () => { if (fileInputRef.current) fileInputRef.current.click(); };
 
-  // --- STEP 1: Upload the PDF ---
-  const handleUploadClick = async () => {
+  // --- STEP 1: Process Saved selection OR Upload a new PDF ---
+  const handleNextStepClick = async () => {
+    // Scenario 1: Using a saved resume from the vault dropdown
+    if (!useUploadedFile && selectedResumeId) {
+      setStep(2);
+      return;
+    }
+
+    // Scenario 2: Using a physical dropzone file upload
     if (!file) return;
     
     setIsUploading(true);
@@ -67,16 +112,21 @@ export default function ResumeUpload() {
     formData.append("resumePdf", file); 
 
     try {
-      await API.post("/api/resume/upload", formData, {
+      const response = await API.post("/api/resume/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
       
-      showToast("Resume saved to profile!", "success");
+      // Update selected ID to the freshly saved resume from the backend response
+      if (response.data?.resume?._id) {
+        setSelectedResumeId(response.data.resume._id);
+      }
+      
+      showToast("Resume saved to profile", "success");
       setStep(2);
       
     } catch (err: any) {
       console.error(err);
-      showToast("Failed to upload the resume.", "error");
+      showToast("Failed to upload the resume", "error");
     } finally {
       setIsUploading(false);
     }
@@ -85,7 +135,7 @@ export default function ResumeUpload() {
   // --- STEP 2: Analyze against Job Description ---
   const handleFinalAnalyze = async () => {
     if (!jobTitle.trim() || !jobDescription.trim()) {
-      setError("Please provide both a job title and a description!");
+      setError("Please provide both a job title and a description.");
       return;
     }
     
@@ -95,20 +145,19 @@ export default function ResumeUpload() {
     try {
       const response = await API.post("/api/analysis/compare", { 
         jobTitle, 
-        jobDescription 
+        jobDescription,
+        resumeId: selectedResumeId
       });
       
       const analysisData = response.data.analysis;
       setResults(analysisData);
       showToast(`Analysis Complete! Match Score: ${analysisData.analysisScore}%`, "success");
-      
-      // Move to the final Results step!
       setStep(3);
       
     } catch (err: any) {
       console.error(err);
       setError(err.response?.data?.message || "Failed to run analysis. Is the server running?");
-      showToast("Analysis failed.", "error");
+      showToast("Analysis failed", "error");
     } finally {
       setIsUploading(false);
     }
@@ -119,13 +168,13 @@ export default function ResumeUpload() {
     setJobTitle("");
     setJobDescription("");
     setResults(null);
+    // If they have vault items, go back to standard vault selection view
+    setUseUploadedFile(savedResumes.length === 0);
     setStep(1);
   };
 
-  // --- Helper to calculate matched skills ---
   const getMatchedSkills = () => {
     if (!results) return [];
-    // Matched skills are posting skills that are NOT in the missing skills array
     return results.postingSkills.filter(
       skill => !results.missingSkills.some(missing => missing.toLowerCase() === skill.toLowerCase())
     );
@@ -134,36 +183,89 @@ export default function ResumeUpload() {
   return (
     <div className="upload-container">
       
-      {/* --- STEP 1 UI: THE DROP ZONE --- */}
+      {/* --- STEP 1 UI: SELECT OR UPLOAD --- */}
       {step === 1 && (
         <>
-          <div 
-            className={`drop-zone ${isDragging ? "dragging" : ""}`}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-          >
-            <div className="upload-icon">📄</div>
-            <h3>{isDragging ? "Drop your resume here!" : "Upload your Resume"}</h3>
-            <p>Drag and drop your PDF file here, or click to browse.</p>
-            
-            <input type="file" accept=".pdf" ref={fileInputRef} onChange={handleFileSelect} style={{ display: "none" }} />
-            <button className="btn-outline-dark" onClick={triggerFileInput}>Select PDF</button>
-          </div>
-
-          {error && <div className="upload-error">{error}</div>}
-
-          {file && (
-            <div className="file-preview">
-              <span className="file-name">{file.name}</span>
-              <button 
-                className="btn-brand-solid submit-resume" 
-                onClick={handleUploadClick}
-                disabled={isUploading}
+          {!useUploadedFile && savedResumes.length > 0 ? (
+            /* SMART VAULT DROPDOWN INTERFACE */
+            <div style={{ padding: "2rem", textAlign: "center", backgroundColor: "white", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+              <h3 style={{ color: "#1e293b", margin: "0 0 0.5rem 0" }}>Select a Saved Resume</h3>
+              <p style={{ color: "#64748b", fontSize: "0.9rem", marginBottom: "1.5rem" }}>
+                We found existing documents in your vault. Pick one to run an instant analysis.
+              </p>
+              
+              <select
+                value={selectedResumeId}
+                onChange={(e) => setSelectedResumeId(e.target.value)}
+                style={{ width: "100%", maxWidth: "400px", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.95rem", marginBottom: "1.5rem", outline: "none" }}
               >
-                {isUploading ? "Uploading..." : "Next: Add Job Details ➔"}
-              </button>
+                {savedResumes.map((resume) => (
+                  <option key={resume._id} value={resume._id}>
+                    {resume.fileName} {resume.isPrimary ? "(Primary Default)" : ""}
+                  </option>
+                ))}
+              </select>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem", alignItems: "center" }}>
+                <button 
+                  className="btn-brand-solid" 
+                  onClick={handleNextStepClick}
+                  style={{ width: "100%", maxWidth: "400px" }}
+                >
+                  Next: Add Job Details ➔
+                </button>
+                <button 
+                  onClick={() => setUseUploadedFile(true)}
+                  className="btn-outline-dark"
+                  style={{ width: "100%", maxWidth: "400px", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", marginTop: "0.5rem" }}
+                >
+                  Upload a new file instead
+                </button>
+              </div>
             </div>
+          ) : (
+            /* DRAG AND DROP ZONE */
+            <>
+              <div 
+                className={`drop-zone ${isDragging ? "dragging" : ""}`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
+                <h3>{isDragging ? "Drop your resume here" : "Upload your Resume"}</h3>
+                <p>Drag and drop your PDF file here, or click to browse.</p>
+                
+                <input type="file" accept=".pdf" ref={fileInputRef} onChange={handleFileSelect} style={{ display: "none" }} />
+                <button className="btn-outline-dark" onClick={triggerFileInput}>Select PDF</button>
+              </div>
+
+              {error && <div className="upload-error">{error}</div>}
+
+              {file && (
+                <div className="file-preview">
+                  <span className="file-name">{file.name}</span>
+                  <button 
+                    className="btn-brand-solid submit-resume" 
+                    onClick={handleNextStepClick}
+                    disabled={isUploading}
+                  >
+                    {isUploading ? "Uploading..." : "Next: Add Job Details ➔"}
+                  </button>
+                </div>
+              )}
+
+              {savedResumes.length > 0 && (
+                <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
+                  <button 
+                    onClick={() => setUseUploadedFile(false)}
+                    className="btn-outline-dark"
+                    style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.5rem 1rem", border: "1px solid #cbd5e1", backgroundColor: "white", color: "#475569" }}
+                  >
+                    Select from Vault
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </>
       )}
@@ -173,7 +275,7 @@ export default function ResumeUpload() {
         <div className="job-description-step" style={{ animation: 'slideIn 0.4s ease-out' }}>
           <h3 style={{ marginBottom: '0.5rem', color: '#1e293b' }}>The Target</h3>
           <p style={{ color: '#64748b', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
-            Your resume was saved. Now, provide the title and paste the description of the job you want to apply for.
+            Resume selected. Now, provide the title and paste the description of the job you want to apply for.
           </p>
           
           {error && <div className="upload-error" style={{ marginBottom: '1rem' }}>{error}</div>}
@@ -202,7 +304,7 @@ export default function ResumeUpload() {
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <button className="btn-outline-dark" onClick={() => setStep(1)}>← Back</button>
             <button className="btn-brand-solid" onClick={handleFinalAnalyze} disabled={isUploading}>
-              {isUploading ? "Analyzing..." : "⚡ Generate Match Score"}
+              {isUploading ? "Analyzing..." : "Generate Match Score"}
             </button>
           </div>
         </div>
@@ -212,7 +314,6 @@ export default function ResumeUpload() {
       {step === 3 && results && (
         <div className="results-step" style={{ animation: 'slideIn 0.4s ease-out', textAlign: 'left' }}>
           
-          {/* Header & Score */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '1rem' }}>
             <div>
               <h2 style={{ margin: 0, color: '#1e293b' }}>{jobTitle}</h2>
@@ -223,10 +324,9 @@ export default function ResumeUpload() {
             </div>
           </div>
 
-          {/* Missing Skills Section */}
           <div style={{ marginBottom: '2rem' }}>
             <h3 style={{ color: '#ef4444', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              ⚠️ Missing Keywords 
+              Missing Keywords 
               <span style={{ fontSize: '0.8rem', fontWeight: 'normal', color: '#64748b' }}>({results.missingSkills.length})</span>
             </h3>
             {results.missingSkills.length === 0 ? (
@@ -242,10 +342,9 @@ export default function ResumeUpload() {
             )}
           </div>
 
-          {/* Matched Skills Section */}
           <div>
             <h3 style={{ color: '#22c55e', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              ✅ Matched Keywords 
+              Matched Keywords 
               <span style={{ fontSize: '0.8rem', fontWeight: 'normal', color: '#64748b' }}>({getMatchedSkills().length})</span>
             </h3>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
@@ -265,10 +364,9 @@ export default function ResumeUpload() {
         </div>
       )}
 
-      {/* Toast Notification */}
       {toast && (
         <div className={`toast-notification ${toast.type}`}>
-          {toast.type === 'success' ? '✅' : '❌'} {toast.message}
+          {toast.message}
         </div>
       )}
     </div>
