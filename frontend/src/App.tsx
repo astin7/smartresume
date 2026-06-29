@@ -18,6 +18,8 @@ function App() {
         {/* Anything inside this Route element requires a token */}
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          {/* --- NEW: Tell the router that the jobs page is a valid protected route --- */}
+          <Route path="/dashboard/jobs" element={<Dashboard />} />
         </Route>
 
         {/* Catch-all Redirect */}

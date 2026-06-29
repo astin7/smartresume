@@ -1,11 +1,16 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { API } from "../services/api";
-import ResumeUpload from "../components/ResumeUpload";
 import "./Dashboard.css";
+import { useState, useEffect } from "react";
+// 1. Fixed the duplicate imports here
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { API } from "../services/api";
+
+import ResumeUpload from "../components/ResumeUpload";
+import DashboardHistory from "../components/DashboardHistory";
+import JobTracker from "../components/JobTracker"; 
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const location = useLocation();
   
   // Create state to hold the real data from the database
   const [userData, setUserData] = useState<any>(null);
@@ -13,17 +18,20 @@ export default function Dashboard() {
   
   // State to toggle the drag-and-drop zone
   const [showUpload, setShowUpload] = useState(false);
+  
+  // 2. Check if we are currently on the Job Tracker page
+  const isJobTracker = location.pathname === "/dashboard/jobs";
 
   // When the dashboard loads, fetch the user's data
   useEffect(() => {
-    // 1. Instantly load from local storage so the UI is immediately ready
+    // Instantly load from local storage so the UI is immediately ready
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
       setUserData(JSON.parse(savedUser));
       setLoading(false);
     }
 
-    // 2. Double-check with the database in the background (Security & Syncing)
+    // Double-check with the database in the background (Security & Syncing)
     const fetchProfile = async () => {
       try {
         const response = await API.get('/api/auth/me');
@@ -60,9 +68,10 @@ export default function Dashboard() {
         <Link to="/" className="dash-logo">SMARTRESUME</Link>
         
         <nav className="dash-nav">
-          <Link to="/dashboard" className="dash-nav-item active">Overview</Link>
+          {/* 3. Updated sidebar links to highlight dynamically */}
+          <Link to="/dashboard" className={`dash-nav-item ${!isJobTracker ? "active" : ""}`}>Overview</Link>
           <Link to="/dashboard/resumes" className="dash-nav-item">My Resumes</Link>
-          <Link to="/dashboard/jobs" className="dash-nav-item">Job Tracker</Link>
+          <Link to="/dashboard/jobs" className={`dash-nav-item ${isJobTracker ? "active" : ""}`}>Job Tracker</Link>
           <Link to="/settings" className="dash-nav-item">Settings</Link>
         </nav>
 
@@ -81,67 +90,61 @@ export default function Dashboard() {
 
       {/* Main Content Dashboard */}
       <main className="dash-main">
-        <header className="dash-header">
-          <h1>Welcome back, {userData?.name?.split(' ')[0] || "there"}</h1>
-          {/* 1. Wired up the Header Button */}
-          <button 
-            className="btn-brand-solid" 
-            onClick={() => setShowUpload(true)}
-          >
-            + New Analysis
-          </button>
-        </header>
-
-        {/* Top Stats */}
-        <div className="dash-stats-grid">
-          <div className="stat-card">
-            <div className="stat-title">Total Scans</div>
-            <div className="stat-value">{userData?.scans || 0}</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-title">Avg. Match Score</div>
-            <div className="stat-value">0%</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-title">Interviews Landed</div>
-            <div className="stat-value">0</div>
-          </div>
-        </div>
-
-        {/* Recent Activity / Upload Zone Toggle */}
-        <h2 className="dash-section-title">
-          {showUpload ? "New Analysis" : "Recent Analyses"}
-        </h2>
-        
-        {/* 2. The Conditional Render for the Upload Zone */}
-        {showUpload ? (
-          <div className="content-card">
-             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-               <h3 style={{ margin: 0, color: '#1e293b' }}>Upload a new resume</h3>
-               <button 
-                 className="btn-outline-dark" 
-                 style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem' }}
-                 onClick={() => setShowUpload(false)}
-               >
-                 Cancel
-               </button>
-             </div>
-             {/* This renders your new Drag and Drop component */}
-             <ResumeUpload />
-          </div>
+        {/* 4. Conditionally render either the Job Tracker OR the Overview */}
+        {isJobTracker ? (
+          <JobTracker />
         ) : (
-          <div className="content-card">
-            <p style={{ color: '#64748b', marginBottom: '1rem' }}>
-              You haven't analyzed any resumes yet this week.
-            </p>
-            {/* 3. Wired up the Empty State Button */}
-            <button 
-              className="btn-outline-dark"
-              onClick={() => setShowUpload(true)}
-            >
-              Upload Resume
-            </button>
-          </div>
+          <>
+            <header className="dash-header">
+              <h1>Welcome back, {userData?.name?.split(' ')[0] || "there"}</h1>
+              <button 
+                className="btn-brand-solid" 
+                onClick={() => setShowUpload(true)}
+              >
+                + New Analysis
+              </button>
+            </header>
+
+            {/* Top Stats */}
+            <div className="dash-stats-grid">
+              <div className="stat-card">
+                <div className="stat-title">Total Scans</div>
+                <div className="stat-value">{userData?.scans || 0}</div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-title">Avg. Match Score</div>
+                <div className="stat-value">0%</div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-title">Interviews Landed</div>
+                <div className="stat-value">0</div>
+              </div>
+            </div>
+            
+            {/* The Conditional Render for Upload vs History */}
+            {showUpload ? (
+              <>
+                <h2 className="dash-section-title">New Analysis</h2>
+                <div className="content-card">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                    <h3 style={{ margin: 0, color: '#1e293b' }}>Upload a new resume</h3>
+                    <button 
+                      className="btn-outline-dark" 
+                      style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem' }}
+                      onClick={() => setShowUpload(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                  <ResumeUpload />
+                </div>
+              </>
+            ) : (
+              <div style={{ marginTop: '2rem' }}>
+                <DashboardHistory />
+              </div>
+            )}
+          </>
         )}
       </main>
 

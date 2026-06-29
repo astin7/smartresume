@@ -1,8 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 const analysisRoutes = require("./routes/analysis.routes");
-const joblistRoutes = require("./routes/joblist.routes");
+const joblistRoutes = require("./routes/joblist.routes"); 
 const authRoutes = require("./routes/auth.routes");
+const resumeRoutes = require('./routes/resume.routes');
 const resumeRoutes = require('./routes/resume.routes');
 
 const app = express();
@@ -14,7 +15,7 @@ app.use(cors({
 
 app.use(express.json());
 
-// Manual Header Override (should prolly change)
+// Manual Header Override
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
@@ -25,8 +26,10 @@ app.use((req, res, next) => {
 
 // Routes
 app.use("/api/analysis", analysisRoutes);
+// --- FIXED: Make sure this route matches what the frontend is calling ---
 app.use("/api/joblist", joblistRoutes);
 app.use("/api/auth", authRoutes);
+app.use('/api/resume', resumeRoutes);
 app.use('/api/resume', resumeRoutes);
 
 app.get("/health", (req, res) => {

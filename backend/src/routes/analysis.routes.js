@@ -16,9 +16,26 @@ router.get("/", authMiddleware, async (req, res) => {
     }
 });
 
-// --- THE NEW ROUTE ---
+// --- NEW DELETE ROUTE ---
+router.delete("/:id", authMiddleware, async (req, res) => {
+    try {
+        const deleted = await Analysis.findOneAndDelete({ 
+            _id: req.params.id, 
+            user: req.user._id 
+        });
+        
+        if (!deleted) {
+            return res.status(404).json({ error: "Analysis not found" });
+        }
+        res.status(200).json({ message: "Analysis deleted successfully" });
+    } catch (error) {
+        console.error("DELETE ERROR:", error);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+// --- COMPARE ROUTE ---
 router.post("/compare", authMiddleware, async (req, res) => {
-    // 1. A LOUD CONSOLE LOG TO PROVE WE MADE IT HERE
     console.log("\n========================================");
     console.log("🚀 /api/analysis/compare ROUTE HIT!");
     console.log("========================================\n");
@@ -39,10 +56,8 @@ router.post("/compare", authMiddleware, async (req, res) => {
 
         console.log("✅ Successfully retrieved saved resume text from database.");
 
-        // Attach the saved resume text to the request body for the controller
         req.body.resumeText = user.resumeText;
 
-        // Hand off to your existing AI controller
         console.log("🤖 Handing data off to AI Controller...");
         return createAnalysis(req, res);
 
