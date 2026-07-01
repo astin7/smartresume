@@ -34,7 +34,6 @@ export default function Signup() {
       // Save the token the backend just generated for us
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
-
         localStorage.setItem("user", JSON.stringify(response.data.user));
       }
 
@@ -50,6 +49,13 @@ export default function Signup() {
 
   return (
     <div className="auth-layout">
+      {/* NEW: Back to Home Button */}
+      <div style={{ position: "absolute", top: "2rem", left: "2rem" }}>
+        <Link to="/" style={{ textDecoration: "none", color: "#64748b", fontWeight: "600", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          ← Back to Home
+        </Link>
+      </div>
+
       <div className="auth-card">
         <div className="auth-header">
           <Link to="/" className="auth-logo">SMARTRESUME</Link>

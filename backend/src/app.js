@@ -5,11 +5,11 @@ const joblistRoutes = require("./routes/joblist.routes");
 const authRoutes = require("./routes/auth.routes");
 const resumeRoutes = require('./routes/resume.routes');
 const searchRoutes = require("./routes/search.routes");
-const savedJobsRoutes = require("./routes/savedJobs.routes"); // Imported correctly
+const savedJobsRoutes = require("./routes/savedJobs.routes"); 
 
 const app = express();
 
-// The `cors` package perfectly handles preflight (OPTIONS) and headers.
+// The cors package perfectly handles preflight (OPTIONS) and headers.
 app.use(cors({
     origin: "http://localhost:5173",
     credentials: true
@@ -23,7 +23,8 @@ app.use("/api/joblist", joblistRoutes);
 app.use("/api/auth", authRoutes);
 app.use('/api/resume', resumeRoutes);
 app.use("/api/search", searchRoutes);
-app.use("/api/saved-jobs", savedJobsRoutes); // Used the variable here
+app.use("/api/saved-jobs", savedJobsRoutes); 
+app.use("/api/ai", require("./routes/ai.routes"));
 
 // Health Check
 app.get("/health", (req, res) => {

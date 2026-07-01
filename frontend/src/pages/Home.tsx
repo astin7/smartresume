@@ -31,7 +31,8 @@ export default function Home() {
           {/* Right Side: Action Button */}
           <div className="nav-actions">
             <Link to="/login" className="nav-link-subtle">Log in</Link>
-            <Link to="/signup" className="btn-outline-dark">Get started free</Link>
+            {/* UPDATED: Applied the new premium CTA class */}
+            <Link to="/signup" className="btn-get-started">Get started free</Link>
           </div>
         </div>
       </nav>
@@ -62,7 +63,10 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <button className="btn-brand-solid">Get started free →</button>
+            {/* UPDATED: Converted dummy button to functional Link */}
+            <Link to="/signup" className="btn-get-started" style={{ padding: "14px 28px", fontSize: "1.1rem" }}>
+              Get started free →
+            </Link>
           </motion.div>
         </div>
 
@@ -219,7 +223,10 @@ export default function Home() {
         <div className="container text-center">
           <h2 className="cta-title">Ready to transform your career?</h2>
           <p className="cta-sub">Join ambitious engineers already using SMARTRESUME to land their dream roles. Start for free — no credit card required.</p>
-          <button className="btn-white-solid">Get started free →</button>
+          {/* UPDATED: Converted dummy button to functional Link */}
+          <Link to="/signup" className="btn-white-solid" style={{ display: "inline-block", textDecoration: "none" }}>
+            Get started free →
+          </Link>
         </div>
       </section>
 

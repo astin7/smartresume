@@ -4,6 +4,8 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute"; 
+import Settings from "./components/Settings";
+// Note: You can remove the SavedJobs import here since Dashboard.tsx handles it directly now!
 
 function App() {
   return (
@@ -20,14 +22,16 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/jobs" element={<Dashboard />} />
           <Route path="/dashboard/resumes" element={<Dashboard />} />
-          
-          {/* --- NEW: Tell the router that the live job search is a valid protected route --- */}
           <Route path="/dashboard/search" element={<Dashboard />} />
+          
+          {/* --- NEW: Tell the router that saved-jobs is a valid protected dashboard route --- */}
+          <Route path="/dashboard/saved-jobs" element={<Dashboard />} />
         </Route>
 
         {/* Catch-all Redirect */}
         {/* If a user goes to a random URL, send them to Login */}
         <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </BrowserRouter>
   );

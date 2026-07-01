@@ -32,7 +32,6 @@ export default function Login() {
       // Optional: If your backend sends back a JWT token, save it to localStorage
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
-
         localStorage.setItem("user", JSON.stringify(response.data.user));
       }
 
@@ -48,6 +47,13 @@ export default function Login() {
 
   return (
     <div className="auth-layout">
+      {/* NEW: Back to Home Button */}
+      <div style={{ position: "absolute", top: "2rem", left: "2rem" }}>
+        <Link to="/" style={{ textDecoration: "none", color: "#64748b", fontWeight: "600", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          ← Back to Home
+        </Link>
+      </div>
+
       <div className="auth-card">
         <div className="auth-header">
           <Link to="/" className="auth-logo">SMARTRESUME</Link>

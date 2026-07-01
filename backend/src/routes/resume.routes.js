@@ -72,8 +72,9 @@ router.post("/upload", authMiddleware, upload.single("resumePdf"), (req, res) =>
         const newResume = new Resume({
           user: req.user._id,
           fileName: req.file.originalname,
-          fileUrl: req.file.path, // Path to local storage folder
-          isPrimary: !hasPrimary // If they have no resumes yet, make this one default automatically
+          fileUrl: req.file.path, 
+          extractedText: extractedText, // NEW: We are now explicitly saving the parsed text to the database
+          isPrimary: !hasPrimary 
         });
 
         const savedResume = await newResume.save();

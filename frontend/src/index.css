@@ -56,7 +56,7 @@ body { width: 100%; overflow-x: hidden; background: var(--bg-white); color: var(
   border: none; border-radius: 6px; padding: 14px 28px; 
   font-weight: 600; font-size: 1rem; cursor: pointer; transition: background 0.2s;
 }
-.btn-brand-solid:hover { background: #217fb8; } /* A slightly darker blue for the hover state */
+.btn-brand-solid:hover { background: #217fb8; } 
 
 .btn-white-solid {
   background: var(--bg-white); color: var(--text-main); 
@@ -64,6 +64,54 @@ body { width: 100%; overflow-x: hidden; background: var(--bg-white); color: var(
   font-weight: 600; font-size: 1rem; cursor: pointer; transition: 0.2s;
 }
 .btn-white-solid:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+/* The Premium Get Started Button */
+.btn-get-started {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+  color: #ffffff !important;
+  padding: 0.6rem 1.4rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3), 0 2px 4px -1px rgba(59, 130, 246, 0.2);
+}
+
+/* The Hover Lift & Stronger Shadow */
+.btn-get-started:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4), 0 4px 6px -2px rgba(59, 130, 246, 0.2);
+}
+
+/* The Click effect */
+.btn-get-started:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px -1px rgba(59, 130, 246, 0.3);
+}
+
+/* The Cool "Shine" Animation on Hover */
+.btn-get-started::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  transition: all 0.6s ease;
+}
+
+.btn-get-started:hover::after {
+  left: 100%;
+}
 
 /* --- Hero Section --- */
 .hero-clean { padding-top: 140px; background: var(--bg-white); position: relative; }
