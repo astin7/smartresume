@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const API = axios.create({
-  baseURL: 'http://localhost:5050'
+  baseURL: 'https://smartresume-api-pbz5.onrender.com'
 });
 
 API.interceptors.request.use((req) => {
