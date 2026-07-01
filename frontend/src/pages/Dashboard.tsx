@@ -9,7 +9,7 @@ import JobTracker from "../components/JobTracker";
 import MyResumes from '../components/MyResumes';
 import LiveJobSearch from '../components/LiveJobSearch';
 import SavedJobs from '../components/SavedJobs'; 
-import Settings from '../components/Settings'; // NEW: Imported the Settings component
+import Settings from '../components/Settings'; 
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -19,8 +19,8 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [showUpload, setShowUpload] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [stats, setStats] = useState({ totalScans: 0, avgScore: 0 });
   
-  // Routing checks
   const isJobTracker = location.pathname === "/dashboard/jobs";
   const isResumes = location.pathname === "/dashboard/resumes";
   const isOverview = location.pathname === "/dashboard" || location.pathname === "/dashboard/";
@@ -49,7 +49,25 @@ export default function Dashboard() {
       }
     };
 
+    const fetchStats = async () => {
+      try {
+        const response = await API.get('/api/analysis');
+        const history = response.data;
+        
+        const total = history.length;
+        // Calculate the average score (protect against dividing by 0 if history is empty)
+        const avg = total > 0 
+          ? Math.round(history.reduce((sum: number, item: any) => sum + item.analysisScore, 0) / total) 
+          : 0;
+          
+        setStats({ totalScans: total, avgScore: avg });
+      } catch (error) {
+        console.error("Failed to fetch stats", error);
+      }
+    };
+
     fetchProfile();
+    fetchStats();
   }, [navigate]);
 
   if (loading) {
@@ -61,10 +79,8 @@ export default function Dashboard() {
   return (
     <div className="dashboard-layout">
       
-      {/* The Settings Modal Popup */}
       <Settings isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
 
-      {/* Sidebar Navigation */}
       <aside className="dash-sidebar">
         <Link to="/" className="dash-logo">SMARTRESUME</Link>
         
@@ -75,7 +91,6 @@ export default function Dashboard() {
           <Link to="/dashboard/search" className={`dash-nav-item ${isSearch ? "active" : ""}`}>Live Job Search</Link>
           <Link to="/dashboard/saved-jobs" className={`dash-nav-item ${isSavedJobs ? "active" : ""}`}>Saved Jobs</Link>
           
-          {/* Changed from a Link to a clickable div that triggers the modal */}
           <div 
             className="dash-nav-item" 
             onClick={() => setIsSettingsOpen(true)}
@@ -98,10 +113,7 @@ export default function Dashboard() {
         </div>
       </aside>
 
-      {/* Main Content Dashboard */}
       <main className="dash-main">
-
-        {/* Dynamic Component Rendering */}
         {isJobTracker && <JobTracker />}
         {isResumes && <MyResumes />}
         {isSearch && <LiveJobSearch />}
@@ -122,11 +134,11 @@ export default function Dashboard() {
             <div className="dash-stats-grid">
               <div className="stat-card">
                 <div className="stat-title">Total Scans</div>
-                <div className="stat-value">{userData?.scans || 0}</div>
+                <div className="stat-value">{stats.totalScans}</div>
               </div>
               <div className="stat-card">
                 <div className="stat-title">Avg. Match Score</div>
-                <div className="stat-value">0%</div>
+                <div className="stat-value">{stats.avgScore}%</div>
               </div>
               <div className="stat-card">
                 <div className="stat-title">Interviews Landed</div>

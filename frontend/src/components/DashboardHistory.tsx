@@ -19,7 +19,7 @@ export default function DashboardHistory() {
   // State for the modal
   const [deleteId, setDeleteId] = useState<string | null>(null);
   
-  // --- NEW: State to track which cards are currently fading out ---
+  // State to track which cards are currently fading out
   const [isDeleting, setIsDeleting] = useState<string[]>([]);
 
   useEffect(() => {
@@ -46,13 +46,13 @@ export default function DashboardHistory() {
     setDeleteId(null);
 
     try {
-      // 1. Tell the backend to delete it
+      // Tell the backend to delete it
       await API.delete(`/api/analysis/${idToRemove}`);
       
-      // 2. Trigger the CSS fade-out animation
+      // Trigger the CSS fade-out animation
       setIsDeleting(prev => [...prev, idToRemove]);
       
-      // 3. Wait for the 300ms CSS animation to finish, then remove it from the DOM
+      // Wait for the 300ms CSS animation to finish, then remove it from the DOM
       setTimeout(() => {
         setHistory(prev => prev.filter(item => item._id !== idToRemove));
         setIsDeleting(prev => prev.filter(id => id !== idToRemove));
@@ -75,7 +75,7 @@ export default function DashboardHistory() {
   return (
     <div style={{ animation: "slideIn 0.4s ease-out" }}>
       
-      {/* CUSTOM CONFIRMATION MODAL OVERLAY */}
+      {/* Custom confirmation modal overlay */}
       {deleteId && (
         <div style={{
           position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
@@ -127,7 +127,6 @@ export default function DashboardHistory() {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
-                // --- NEW: CSS Transitions ---
                 transition: "all 0.3s ease-in-out",
                 transform: isDeleting.includes(item._id) ? "scale(0.9)" : "scale(1)",
                 opacity: isDeleting.includes(item._id) ? 0 : 1,
