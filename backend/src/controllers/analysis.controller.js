@@ -1,4 +1,3 @@
-// backend/src/controllers/analysis.controller.js
 const Analysis = require("../models/Analysis");
 const { runAIAnalysis } = require("../services/ai.service");
 
