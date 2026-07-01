@@ -29,7 +29,6 @@ export default function Login() {
       
       console.log("Login successful!", response.data);
       
-      // Optional: If your backend sends back a JWT token, save it to localStorage
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
@@ -39,15 +38,12 @@ export default function Login() {
       navigate("/dashboard");
       
     } catch (err: any) {
-      // Catch backend errors (e.g., "Invalid credentials", "User not found")
-      // We check for err.response.data.message, otherwise show a generic error
       setError(err.response?.data?.message || "Incorrect email or password. Please try again.");
     }
   };
 
   return (
     <div className="auth-layout">
-      {/* NEW: Back to Home Button */}
       <div style={{ position: "absolute", top: "2rem", left: "2rem" }}>
         <Link to="/" style={{ textDecoration: "none", color: "#64748b", fontWeight: "600", display: "flex", alignItems: "center", gap: "0.5rem" }}>
           ← Back to Home

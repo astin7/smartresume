@@ -18,11 +18,9 @@ export default function Dashboard() {
   const [userData, setUserData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showUpload, setShowUpload] = useState(false);
-  
-  // NEW: State to control the Settings modal
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   
-  // ROUTING CHECKS
+  // Routing checks
   const isJobTracker = location.pathname === "/dashboard/jobs";
   const isResumes = location.pathname === "/dashboard/resumes";
   const isOverview = location.pathname === "/dashboard" || location.pathname === "/dashboard/";
@@ -63,7 +61,7 @@ export default function Dashboard() {
   return (
     <div className="dashboard-layout">
       
-      {/* NEW: The Settings Modal Popup */}
+      {/* The Settings Modal Popup */}
       <Settings isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
 
       {/* Sidebar Navigation */}
@@ -77,7 +75,7 @@ export default function Dashboard() {
           <Link to="/dashboard/search" className={`dash-nav-item ${isSearch ? "active" : ""}`}>Live Job Search</Link>
           <Link to="/dashboard/saved-jobs" className={`dash-nav-item ${isSavedJobs ? "active" : ""}`}>Saved Jobs</Link>
           
-          {/* UPDATED: Changed from a Link to a clickable div that triggers the modal */}
+          {/* Changed from a Link to a clickable div that triggers the modal */}
           <div 
             className="dash-nav-item" 
             onClick={() => setIsSettingsOpen(true)}
@@ -103,7 +101,7 @@ export default function Dashboard() {
       {/* Main Content Dashboard */}
       <main className="dash-main">
 
-        {/* DYNAMIC COMPONENT RENDERING */}
+        {/* Dynamic Component Rendering */}
         {isJobTracker && <JobTracker />}
         {isResumes && <MyResumes />}
         {isSearch && <LiveJobSearch />}

@@ -48,7 +48,7 @@ export default function Settings({ isOpen, onClose }: SettingsProps) {
     window.location.href = '/login';
   };
 
-  // --- API HANDLERS ---
+  // API handlers
   const handleUpdateProfile = async () => {
     setMessage(""); setError("");
     try {
@@ -132,7 +132,7 @@ export default function Settings({ isOpen, onClose }: SettingsProps) {
                   )}
                 </div>
 
-                {/* EMAIL ROW */}
+                {/* Email row */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "1px solid #f1f5f9", paddingBottom: "1.5rem" }}>
                   <div style={{ flex: 1 }}>
                     <label style={{ display: "block", fontSize: "0.75rem", fontWeight: "bold", color: "#64748b", marginBottom: "0.4rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Email</label>
@@ -152,7 +152,7 @@ export default function Settings({ isOpen, onClose }: SettingsProps) {
                   )}
                 </div>
 
-                {/* PASSWORD ROW */}
+                {/* Password row */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "1px solid #f1f5f9", paddingBottom: "1.5rem" }}>
                   <div style={{ flex: 1 }}>
                     <label style={{ display: "block", fontSize: "0.75rem", fontWeight: "bold", color: "#64748b", marginBottom: "0.4rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Password</label>
@@ -175,7 +175,7 @@ export default function Settings({ isOpen, onClose }: SettingsProps) {
                   )}
                 </div>
 
-                {/* PLAN ROW */}
+                {/* Plan row */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <div>
                     <label style={{ display: "block", fontSize: "0.75rem", fontWeight: "bold", color: "#64748b", marginBottom: "0.4rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Subscription Plan</label>

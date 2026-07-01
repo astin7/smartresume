@@ -12,7 +12,7 @@ router.post("/match", authMiddleware, async (req, res) => {
         const { jobTitle, company, location } = req.body;
         const userId = req.user.id || req.user._id;
 
-        // 1. Fetch the user's primary resume from MongoDB
+        // Fetch the user's primary resume from MongoDB
         const primaryResume = await Resume.findOne({ user: userId, isPrimary: true });
         
         let candidateText = "The candidate has not uploaded a primary resume yet.";
@@ -22,7 +22,7 @@ router.post("/match", authMiddleware, async (req, res) => {
             candidateText = primaryResume.extractedText;
         }
 
-        // 2. Setup Gemini AI
+        // Setup Gemini AI
         const apiKey = process.env.AI_API_KEY;
         if (!apiKey) {
             console.error("API Key is missing from .env!");
@@ -33,7 +33,7 @@ router.post("/match", authMiddleware, async (req, res) => {
         // Using the stable 2.0 model to avoid 503 errors
         const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-        // 3. Send the real resume and the job details to the AI
+        // Send the real resume and the job details to the AI
         const prompt = `
         You are an expert technical recruiter. Analyze the fit between the provided candidate resume and the target job.
         
@@ -73,9 +73,7 @@ router.post("/match", authMiddleware, async (req, res) => {
     }
 });
 
-// ==========================================
-// NEW: Generate AI Cover Letter
-// ==========================================
+// Generate AI Cover Letter
 router.post("/cover-letter", authMiddleware, async (req, res) => {
     try {
         console.log("📥 Received AI Cover Letter request for:", req.body.jobTitle);
@@ -83,7 +81,7 @@ router.post("/cover-letter", authMiddleware, async (req, res) => {
         const { jobTitle, company, location } = req.body;
         const userId = req.user.id || req.user._id;
 
-        // 1. Fetch the primary resume
+        // Fetch the primary resume
         const primaryResume = await Resume.findOne({ user: userId, isPrimary: true });
         
         let candidateText = "The candidate has not uploaded a primary resume yet.";
@@ -91,7 +89,7 @@ router.post("/cover-letter", authMiddleware, async (req, res) => {
             candidateText = primaryResume.extractedText;
         }
 
-        // 2. Setup Gemini AI
+        // Setup Gemini AI
         const apiKey = process.env.AI_API_KEY;
         if (!apiKey) {
             return res.status(500).json({ error: "API key is missing from backend." });
@@ -101,7 +99,7 @@ router.post("/cover-letter", authMiddleware, async (req, res) => {
         // Using the stable 2.0 model to avoid 503 errors
         const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-        // 3. Prompt for the Cover Letter
+        // Prompt for the Cover Letter
         const prompt = `
         You are an expert career coach and executive copywriter. Write a compelling, highly tailored cover letter for the following job based on the candidate's resume.
         

@@ -61,9 +61,7 @@ router.delete("/:jobId", authMiddleware, async (req, res) => {
     }
 });
 
-// ==========================================
-// PATCH: Update Job Status (Kanban Board)
-// ==========================================
+// PATCH: Update Job Status
 router.patch("/:jobId/status", authMiddleware, async (req, res) => {
     try {
         const userId = req.user.id || req.user._id;

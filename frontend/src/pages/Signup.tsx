@@ -6,7 +6,7 @@ import "./Auth.css";
 export default function Signup() {
   const navigate = useNavigate();
   
-  // 1. Create state to hold the form data
+  // Create state to hold the form data
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -14,12 +14,12 @@ export default function Signup() {
   });
   const [error, setError] = useState("");
 
-  // 2. Handle typing in the inputs
+  // Handle typing in the inputs
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  // 3. Handle the form submission
+  // Handle the form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); 
     setError("");
@@ -30,26 +30,25 @@ export default function Signup() {
       
       console.log("Signup successful!", response.data);
       
-      // --- NEW AUTO-LOGIN LOGIC ---
       // Save the token the backend just generated for us
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
       }
 
-      // Shoot straight to the dashboard!
+      // Shoot straight to the dashboard
       navigate("/dashboard");
       // ----------------------------
       
     } catch (err: any) {
-      // If the backend sends back an error (e.g., "Email already in use")
+      // If the backend sends back an error
       setError(err.response?.data?.message || "Failed to sign up. Please try again.");
     }
   };
 
   return (
     <div className="auth-layout">
-      {/* NEW: Back to Home Button */}
+      {/* Back to Home Button */}
       <div style={{ position: "absolute", top: "2rem", left: "2rem" }}>
         <Link to="/" style={{ textDecoration: "none", color: "#64748b", fontWeight: "600", display: "flex", alignItems: "center", gap: "0.5rem" }}>
           ← Back to Home
@@ -63,7 +62,7 @@ export default function Signup() {
           <p>Start optimizing your resume for free.</p>
         </div>
 
-        {/* 4. Connect the form to the submit handler */}
+        {/* Connect the form to the submit handler */}
         <form className="auth-form" onSubmit={handleSubmit}>
           
           {/* Display backend errors if there are any */}

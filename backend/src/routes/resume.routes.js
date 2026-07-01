@@ -10,9 +10,7 @@ const authMiddleware = require("../middleware/auth.middleware");
 
 const router = express.Router();
 
-// ==========================================
-// THE FIX: Ensure the uploads folder exists!
-// ==========================================
+// Makes sure the uploads folder exists
 if (!fs.existsSync("uploads/")) {
     fs.mkdirSync("uploads/", { recursive: true });
 }
@@ -41,9 +39,7 @@ const upload = multer({
   }
 });
 
-// ==========================================
-// 1. POST: Upload, Parse, and Save a Resume
-// ==========================================
+// POST: Upload, Parse, and Save a Resume
 router.post("/upload", authMiddleware, upload.single("resumePdf"), (req, res) => {
   try {
     if (!req.file) {
@@ -73,13 +69,13 @@ router.post("/upload", authMiddleware, upload.single("resumePdf"), (req, res) =>
           user: req.user._id,
           fileName: req.file.originalname,
           fileUrl: req.file.path, 
-          extractedText: extractedText, // NEW: We are now explicitly saving the parsed text to the database
+          extractedText: extractedText, // explicitly saving the parsed text to the database
           isPrimary: !hasPrimary 
         });
 
         const savedResume = await newResume.save();
 
-        // Optional: Keep your original User model in sync with the latest text & increment scans
+        // Keep original User model in sync with the latest text & increment scans
         await User.findByIdAndUpdate(req.user._id, {
             resumeText: extractedText,
             $inc: { scans: 1 }
@@ -108,9 +104,7 @@ router.post("/upload", authMiddleware, upload.single("resumePdf"), (req, res) =>
   }
 });
 
-// ==========================================
-// 2. GET ALL: Fetch all resumes for vault view
-// ==========================================
+// GET ALL: Fetch all resumes for vault view
 router.get("/", authMiddleware, async (req, res) => {
     try {
         const resumes = await Resume.find({ user: req.user._id }).sort({ createdAt: -1 });
@@ -121,9 +115,7 @@ router.get("/", authMiddleware, async (req, res) => {
     }
 });
 
-// ==========================================
-// 3. PATCH: Switch the default "Primary" resume
-// ==========================================
+// PATCH: Switch the default "Primary" resume
 router.patch("/:id/primary", authMiddleware, async (req, res) => {
     try {
         // Set all of this user's resumes to false
@@ -143,9 +135,7 @@ router.patch("/:id/primary", authMiddleware, async (req, res) => {
     }
 });
 
-// ==========================================
-// 4. DELETE: Remove a resume and its local file
-// ==========================================
+// DELETE: Remove a resume and its local file
 router.delete("/:id", authMiddleware, async (req, res) => {
     try {
         const resumeToDelete = await Resume.findOne({ _id: req.params.id, user: req.user._id });

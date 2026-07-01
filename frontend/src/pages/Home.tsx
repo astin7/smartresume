@@ -25,13 +25,13 @@ export default function Home() {
       {/* Navbar */}
       <nav className="navbar-clean">
         <div className="nav-container-clean">
-          {/* Left Side: Branding */}
+          {/* Branding */}
           <Link to="/" className="nav-logo-clean">SMARTRESUME</Link>
 
-          {/* Right Side: Action Button */}
+          {/* Action Button */}
           <div className="nav-actions">
             <Link to="/login" className="nav-link-subtle">Log in</Link>
-            {/* UPDATED: Applied the new premium CTA class */}
+            {/* Applied the new premium CTA class */}
             <Link to="/signup" className="btn-get-started">Get started free</Link>
           </div>
         </div>
@@ -63,7 +63,6 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            {/* UPDATED: Converted dummy button to functional Link */}
             <Link to="/signup" className="btn-get-started" style={{ padding: "14px 28px", fontSize: "1.1rem" }}>
               Get started free →
             </Link>
@@ -80,7 +79,6 @@ export default function Home() {
               <div className="mockup-title">SMARTRESUME — Dashboard</div>
             </div>
             <div className="mockup-body">
-              {/* Abstract Representation of your dashboard */}
               <div className="mockup-sidebar"></div>
               <div className="mockup-main">
                 <div className="mockup-card top"></div>
@@ -94,7 +92,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Dark Section (Logos) */}
+      {/* Dark Section (logos) */}
       <section className="dark-section-clean">
         <div className="container">
           <div className="logo-ticker-clean">
@@ -144,12 +142,11 @@ export default function Home() {
         
         <div className="split-content-right">
           <motion.div className="feature-image-mockup" variants={fadeUp} initial="offscreen" whileInView="onscreen" viewport={{ once: true }}>
-             {/* Add an actual image here later, currently a sleek placeholder */}
           </motion.div>
         </div>
       </section>
 
-      {/* How it works (Timeline) */}
+      {/* How it works */}
       <section id="how-it-works" className="how-it-works-clean bg-light-gray">
         <div className="container">
           <div className="section-header-clean text-center">
@@ -223,7 +220,6 @@ export default function Home() {
         <div className="container text-center">
           <h2 className="cta-title">Ready to transform your career?</h2>
           <p className="cta-sub">Join ambitious engineers already using SMARTRESUME to land their dream roles. Start for free — no credit card required.</p>
-          {/* UPDATED: Converted dummy button to functional Link */}
           <Link to="/signup" className="btn-white-solid" style={{ display: "inline-block", textDecoration: "none" }}>
             Get started free →
           </Link>

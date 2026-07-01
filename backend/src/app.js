@@ -9,7 +9,6 @@ const savedJobsRoutes = require("./routes/savedJobs.routes");
 
 const app = express();
 
-// The cors package perfectly handles preflight (OPTIONS) and headers.
 app.use(cors({
     origin: "http://localhost:5173",
     credentials: true

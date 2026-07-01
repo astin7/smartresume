@@ -9,9 +9,7 @@ const Resume = require("../models/Resume"); // Added Resume model
 const authMiddleware = require("../middleware/auth.middleware");
 const { createAnalysis } = require("../controllers/analysis.controller");
 
-// ==========================================
-// HELPER: Extract text from PDF on the fly
-// ==========================================
+// Extract text from PDF on the fly
 const parsePdfText = (filePath) => {
     return new Promise((resolve, reject) => {
         const pdfParser = new PDFParser(null, 1);
@@ -27,9 +25,7 @@ const parsePdfText = (filePath) => {
     });
 };
 
-// ==========================================
-// 1. GET ALL ANALYSIS HISTORY
-// ==========================================
+// Get all analysis history
 router.get("/", authMiddleware, async (req, res) => {
     try {
         const history = await Analysis.find({ user: req.user._id }).sort({ createdAt: -1 });
@@ -40,9 +36,7 @@ router.get("/", authMiddleware, async (req, res) => {
     }
 });
 
-// ==========================================
-// 2. DELETE ANALYSIS
-// ==========================================
+// Delete Analysis
 router.delete("/:id", authMiddleware, async (req, res) => {
     try {
         const deleted = await Analysis.findOneAndDelete({ 
@@ -60,9 +54,7 @@ router.delete("/:id", authMiddleware, async (req, res) => {
     }
 });
 
-// ==========================================
-// 3. COMPARE ROUTE (AI ENGINE)
-// ==========================================
+// Compare Route (AI Engine)
 router.post("/compare", authMiddleware, async (req, res) => {
     console.log("\n========================================");
     console.log("🚀 /api/analysis/compare ROUTE HIT!");
@@ -78,7 +70,7 @@ router.post("/compare", authMiddleware, async (req, res) => {
         let finalResumeText = "";
 
         if (resumeId) {
-            // SCENARIO A: User picked a specific resume from their vault
+            // Scenario: User picked a specific resume from their vault
             console.log(`🔍 Looking up resume ID: ${resumeId}`);
             const selectedResume = await Resume.findOne({ _id: resumeId, user: req.user._id });
 
@@ -90,7 +82,7 @@ router.post("/compare", authMiddleware, async (req, res) => {
             finalResumeText = await parsePdfText(selectedResume.fileUrl);
 
         } else {
-            // SCENARIO B: Fallback (Just uploaded a brand new file)
+            // Scenario: Fallback (just uploaded a brand new file)
             const user = await User.findById(req.user._id);
             if (!user || !user.resumeText) {
                 console.log("❌ No resume text found in database!");

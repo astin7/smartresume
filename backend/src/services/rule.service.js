@@ -1,7 +1,5 @@
-//In the event AI does not respond validly, This hand coded analysis will run
-
 const codingSkillSet = [
-    //Languages
+    // Languages
     "javascript",
     "python",
     "java",
@@ -13,7 +11,7 @@ const codingSkillSet = [
     "C",
     "html",
     "css",
-    //Frameworks and Libraries
+    // Frameworks and Libraries
     "react",
     "node.js",
     "angular",
@@ -23,20 +21,20 @@ const codingSkillSet = [
     "spring",
     "ruby on rails",
     "laravel",
-    //Databases
+    // Databases
     "sql",
     "mysql",
     "postgresql",
     "mongodb",
     "redis",
-    //Platforms
+    // Platforms
     "aws",
     "azure",
     "google cloud",
     "docker",
     "kubernetes",
     "git",
-    //Other
+    // Other
     "machine learning",
     "data analysis",
     "project management",
@@ -54,7 +52,7 @@ const businessSkillSet = [
     "management",
 ]
 const engineeringEkillSet = [
-    //softwares
+    // softwares
     "autocad",
     "solidworks",
     "matlab",
@@ -63,7 +61,7 @@ const engineeringEkillSet = [
     "labview",
     "simulink",
 
-    //courses
+    // courses
     "thermodynamics",
     "fluid mechanics",
     "statics",

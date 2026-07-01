@@ -3,7 +3,7 @@ import { API } from "../services/api";
 import { DndContext, DragEndEvent, DragStartEvent, closestCorners, useDraggable, useDroppable, DragOverlay } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 
-// 1. Interfaces & Constants
+// Interfaces & Constants
 interface JobItem {
   _id: string;
   companyName: string;
@@ -16,7 +16,7 @@ interface JobItem {
 
 const COLUMNS = ["Bookmarked", "Applied", "Interviewing", "Offer", "Rejected"];
 
-// 2. Sub-Component: The Draggable Job Card
+// Sub-Component: The Draggable Job Card
 const DraggableCard = ({ job, onDelete, isOverlay = false }: { job: JobItem; onDelete?: (id: string) => void; isOverlay?: boolean }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: job._id,
@@ -68,7 +68,7 @@ const DraggableCard = ({ job, onDelete, isOverlay = false }: { job: JobItem; onD
   );
 };
 
-// 3. Sub-Component: The Droppable Column
+// Sub-Component: The Droppable Column
 const DroppableColumn = ({ status, jobs, onDelete }: { status: string; jobs: JobItem[]; onDelete: (id: string) => void }) => {
   const { setNodeRef, isOver } = useDroppable({
     id: status,
@@ -109,7 +109,7 @@ const DroppableColumn = ({ status, jobs, onDelete }: { status: string; jobs: Job
   );
 };
 
-// 4. Main Job Tracker Component
+// Main Job Tracker Component
 export default function JobTracker() {
   const [jobs, setJobs] = useState<JobItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -119,7 +119,7 @@ export default function JobTracker() {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ companyName: "", roleTitle: "", status: "Bookmarked" });
 
-  // NEW: State to track which card is currently being dragged
+  // State to track which card is currently being dragged
   const [activeId, setActiveId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -184,12 +184,12 @@ export default function JobTracker() {
     const activeJob = jobs.find((job) => job._id === jobId);
     if (!activeJob || activeJob.status === newStatus) return;
 
-    // 1. Optimistic UI Update: Instantly snap the card to the new column
+    // Instantly snap the card to the new column
     setJobs((prevJobs) =>
       prevJobs.map((job) => (job._id === jobId ? { ...job, status: newStatus } : job))
     );
 
-    // 2. Background Update: Save to MongoDB
+    // Save to MongoDB
     try {
       await API.patch(`/api/joblist/${jobId}`, { status: newStatus });
     } catch (err) {
@@ -253,7 +253,7 @@ export default function JobTracker() {
         </form>
       )}
 
-      {/* THE KANBAN BOARD */}
+      {/* Kanban Board */}
       <DndContext collisionDetection={closestCorners} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div style={{ display: "flex", gap: "1.5rem", overflowX: "auto", paddingBottom: "1rem" }}>
           {COLUMNS.map((columnStatus) => {

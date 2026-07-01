@@ -21,9 +21,8 @@ export default function LiveJobSearch() {
   const [error, setError] = useState("");
   const [savedJobIds, setSavedJobIds] = useState<Set<string>>(new Set());
 
-  // NEW: Pagination and Loading States
-  const [isLoading, setIsLoading] = useState(false); // For initial search
-  const [isLoadingMore, setIsLoadingMore] = useState(false); // For "Load More"
+  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
 
@@ -36,7 +35,7 @@ export default function LiveJobSearch() {
     }
   };
 
-  // NEW: Unified fetching function to handle both new searches and pagination
+  // Unified fetching function to handle both new searches and pagination
   const executeSearch = async (pageNum: number, isLoadMore: boolean = false) => {
     if (isLoadMore) setIsLoadingMore(true);
     else setIsLoading(true);
@@ -54,14 +53,13 @@ export default function LiveJobSearch() {
       
       const newJobs = response.data;
 
-      // If it's a Load More, append the jobs. Otherwise, replace them.
+      // If it's a Load More, append the jobs. Otherwise, replace them
       if (isLoadMore) {
         setJobs(prev => [...prev, ...newJobs]);
       } else {
         setJobs(newJobs);
       }
 
-      // Adzuna returns up to 20 results per page. If we got 20, assume there's a next page.
       setHasMore(newJobs.length > 0);
       setPage(pageNum);
 
@@ -77,7 +75,7 @@ export default function LiveJobSearch() {
   // Triggered when clicking the Magnifying Glass
   const handleSearch = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    executeSearch(1, false); // Always start fresh at page 1
+    executeSearch(1, false);
   };
 
   // Triggered when clicking "Load More"

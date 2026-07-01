@@ -1,7 +1,6 @@
 async function fetchJobList(filters) {
   const { keyword, location, internship, remote } = filters;
 
-  // Temporary mock data, so we're going to replace this later
   const jobs = [
     {
       title: "Software Engineering Intern",

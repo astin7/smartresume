@@ -166,7 +166,7 @@ export default function SavedJobs() {
         <div style={{ textAlign: "center", padding: "4rem 2rem", backgroundColor: "#F7F7F9", borderRadius: "12px", color: "#717171" }}>No saved roles yet.</div>
       )}
 
-      {/* DYNAMIC AI MODAL */}
+      {/* Dynamic AI Modal */}
       {selectedJob && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "1rem" }}>
           <div style={{ backgroundColor: "white", borderRadius: "16px", width: "100%", maxWidth: modalMode === "coverLetter" ? "700px" : "550px", maxHeight: "90vh", display: "flex", flexDirection: "column", overflow: "hidden", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.2)" }}>

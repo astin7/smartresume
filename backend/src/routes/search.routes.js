@@ -4,7 +4,7 @@ const authMiddleware = require("../middleware/auth.middleware");
 
 router.get("/", authMiddleware, async (req, res) => {
     try {
-        // NEW: Extracted 'page' from the query parameters
+        // Extracted 'page' from the query parameters
         const { what, where, type, company, page } = req.query;
         
         const appId = process.env.ADZUNA_APP_ID;

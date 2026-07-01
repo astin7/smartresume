@@ -15,7 +15,7 @@ export default function MyResumes() {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState("");
   
-  // Modal State for Deletion
+  // Modal State for deletion
   const [resumeToDelete, setResumeToDelete] = useState<string | null>(null);
   
   // Drag and drop state
@@ -39,7 +39,7 @@ export default function MyResumes() {
     }
   };
 
-  // 1. REUSABLE UPLOAD LOGIC
+  // Reusable Upload Logic
   const processFile = async (file: File) => {
     if (file.type !== "application/pdf") {
       alert("Please upload a PDF file.");
@@ -91,7 +91,7 @@ export default function MyResumes() {
     if (file) processFile(file);
   };
 
-  // 3. SET PRIMARY LOGIC
+  // Set Primary Logic
   const handleSetPrimary = async (id: string) => {
     try {
       await API.patch(`/api/resume/${id}/primary`);
@@ -104,7 +104,7 @@ export default function MyResumes() {
     }
   };
 
-  // 4. DELETE LOGIC
+  // Delete Logic
   const confirmDelete = async () => {
     if (!resumeToDelete) return;
     try {
@@ -190,7 +190,7 @@ export default function MyResumes() {
           ))}
         </div>
       ) : (
-        /* DRAG AND DROP ZONE */
+        /* Drag and drop zone */
         <div 
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
@@ -217,7 +217,7 @@ export default function MyResumes() {
         </div>
       )}
 
-      {/* CUSTOM DELETION MODAL OVERLAY */}
+      {/* Deletion Modal Overlay */}
       {resumeToDelete && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "1rem" }}>
           <div style={{ backgroundColor: "white", borderRadius: "12px", width: "100%", maxWidth: "420px", padding: "1.5rem", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.2)" }}>

@@ -12,7 +12,6 @@
   transition: all 0.2s ease-in-out;
 }
 
-/* This is the magic class that triggers when a file hovers over it */
 .drop-zone.dragging {
   border-color: #3b82f6;
   background-color: #eff6ff;

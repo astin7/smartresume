@@ -3,7 +3,7 @@ const router = express.Router();
 const Job = require("../models/Job");
 const authMiddleware = require("../middleware/auth.middleware");
 
-// 1. READ: Get all jobs for the logged-in user
+// READ: Get all jobs for the logged-in user
 router.get("/", authMiddleware, async (req, res) => {
     try {
         const jobs = await Job.find({ user: req.user._id }).sort({ createdAt: -1 });
@@ -15,7 +15,7 @@ router.get("/", authMiddleware, async (req, res) => {
     }
 });
 
-// 2. CREATE: Add a new job
+// CREATE: Add a new job
 router.post("/", authMiddleware, async (req, res) => {
     try {
         const { companyName, roleTitle, status, jobUrl, location, notes } = req.body;
@@ -42,7 +42,7 @@ router.post("/", authMiddleware, async (req, res) => {
     }
 });
 
-// 3. DELETE: Remove a job from the tracker
+// DELETE: Remove a job from the tracker
 router.delete("/:id", authMiddleware, async (req, res) => {
     try {
         const deletedJob = await Job.findOneAndDelete({ 
@@ -60,7 +60,7 @@ router.delete("/:id", authMiddleware, async (req, res) => {
     }
 });
 
-// 4. UPDATE: Change job status or notes
+// UPDATE: Change job status or notes
 router.patch("/:id", authMiddleware, async (req, res) => {
     try {
         const updatedJob = await Job.findOneAndUpdate(

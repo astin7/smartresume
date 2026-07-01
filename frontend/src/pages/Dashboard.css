@@ -1,11 +1,9 @@
-/* src/pages/Dashboard.css */
 .dashboard-layout {
   display: flex;
   min-height: 100vh;
   background-color: var(--bg-light-gray);
 }
 
-/* Sidebar Styling */
 .dash-sidebar {
   width: 260px;
   background-color: var(--bg-white);
@@ -76,7 +74,6 @@
   font-weight: 600;
 }
 
-/* Main Content Area */
 .dash-main {
   flex: 1;
   padding: 3rem 4rem;

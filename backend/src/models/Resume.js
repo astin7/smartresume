@@ -14,7 +14,6 @@ const resumeSchema = new mongoose.Schema({
         type: String, 
         required: true 
     },
-    // NEW: Store the actual text of the resume so the AI can read it instantly
     extractedText: {
         type: String,
         default: ""

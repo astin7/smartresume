@@ -9,7 +9,7 @@ interface AnalysisResult {
   missingSkills: string[];
 }
 
-// NEW: Blueprint for saved resume items
+// Blueprint for saved resume items
 interface SavedResume {
   _id: string;
   fileName: string;
@@ -17,19 +17,19 @@ interface SavedResume {
 }
 
 export default function ResumeUpload() {
-  // --- Wizard State ---
+  // Wizard State 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [jobDescription, setJobDescription] = useState("");
   const [jobTitle, setJobTitle] = useState("");
   const [results, setResults] = useState<AnalysisResult | null>(null);
   
-  // --- File / Vault State ---
+  // File / Vault State 
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   
-  // NEW: State to track saved resumes from the vault
+  // State to track saved resumes from the vault
   const [savedResumes, setSavedResumes] = useState<SavedResume[]>([]);
   const [selectedResumeId, setSelectedResumeId] = useState<string>("");
   const [useUploadedFile, setUseUploadedFile] = useState<boolean>(false);
@@ -37,7 +37,7 @@ export default function ResumeUpload() {
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // NEW: Automatically check the database vault when the page opens
+  // Automatically check the database vault when the page opens
   useEffect(() => {
     const fetchVaultResumes = async () => {
       try {
@@ -69,7 +69,7 @@ export default function ResumeUpload() {
     setTimeout(() => { setToast(null); }, 3000);
   };
 
-  // --- Drag & Drop Handlers ---
+  // Drag & Drop Handlers
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); setIsDragging(true); };
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); setIsDragging(false); };
   
@@ -94,15 +94,15 @@ export default function ResumeUpload() {
 
   const triggerFileInput = () => { if (fileInputRef.current) fileInputRef.current.click(); };
 
-  // --- STEP 1: Process Saved selection OR Upload a new PDF ---
+  //  Process Saved selection OR Upload a new PDF 
   const handleNextStepClick = async () => {
-    // Scenario 1: Using a saved resume from the vault dropdown
+    // Scenario: Using a saved resume from the vault dropdown
     if (!useUploadedFile && selectedResumeId) {
       setStep(2);
       return;
     }
 
-    // Scenario 2: Using a physical dropzone file upload
+    // Scenario: Using a physical dropzone file upload
     if (!file) return;
     
     setIsUploading(true);
@@ -132,7 +132,7 @@ export default function ResumeUpload() {
     }
   };
 
-  // --- STEP 2: Analyze against Job Description ---
+  // Analyze against Job Description
   const handleFinalAnalyze = async () => {
     if (!jobTitle.trim() || !jobDescription.trim()) {
       setError("Please provide both a job title and a description.");
@@ -183,11 +183,11 @@ export default function ResumeUpload() {
   return (
     <div className="upload-container">
       
-      {/* --- STEP 1 UI: SELECT OR UPLOAD --- */}
+      {/*  UI: Select or upload */}
       {step === 1 && (
         <>
           {!useUploadedFile && savedResumes.length > 0 ? (
-            /* SMART VAULT DROPDOWN INTERFACE */
+            /* Smart vault dropdown overlay */
             <div style={{ padding: "2rem", textAlign: "center", backgroundColor: "white", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
               <h3 style={{ color: "#1e293b", margin: "0 0 0.5rem 0" }}>Select a Saved Resume</h3>
               <p style={{ color: "#64748b", fontSize: "0.9rem", marginBottom: "1.5rem" }}>
@@ -224,7 +224,7 @@ export default function ResumeUpload() {
               </div>
             </div>
           ) : (
-            /* DRAG AND DROP ZONE */
+            /* Drag and drop zone */
             <>
               <div 
                 className={`drop-zone ${isDragging ? "dragging" : ""}`}
@@ -270,7 +270,7 @@ export default function ResumeUpload() {
         </>
       )}
 
-      {/* --- STEP 2 UI: THE JOB DESCRIPTION --- */}
+      {/* UI: Job description */}
       {step === 2 && (
         <div className="job-description-step" style={{ animation: 'slideIn 0.4s ease-out' }}>
           <h3 style={{ marginBottom: '0.5rem', color: '#1e293b' }}>The Target</h3>
@@ -310,7 +310,7 @@ export default function ResumeUpload() {
         </div>
       )}
 
-      {/* --- STEP 3 UI: THE RESULTS --- */}
+      {/* UI: The results */}
       {step === 3 && results && (
         <div className="results-step" style={{ animation: 'slideIn 0.4s ease-out', textAlign: 'left' }}>
           

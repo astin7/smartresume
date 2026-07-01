@@ -1,14 +1,14 @@
-/* --- Global CSS Reset & Variables --- */
+/* Global CSS reset & variables */
 :root {
   font-family: 'Inter', system-ui, sans-serif;
   line-height: 1.5;
   
-  /* Brand Colors matching your new blue aesthetic */
+  /* Blue aesthetic color */
   --brand-blue: #2b98d6; 
   --brand-blue-light: #e6f4fb;
   --dark-navy: #0a0f16;
   
-  /* Layout Colors */
+  /* Layout colors */
   --bg-white: #ffffff;
   --bg-light-gray: #f9fafb;
   --text-main: #111827;
@@ -22,7 +22,7 @@ body { width: 100%; overflow-x: hidden; background: var(--bg-white); color: var(
 .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
 .text-center { text-align: center; }
 
-/* --- Navbar --- */
+/* Navbar */
 .navbar-clean {
   position: fixed; 
   top: 0; left: 0; width: 100%; height: 72px; 
@@ -43,7 +43,7 @@ body { width: 100%; overflow-x: hidden; background: var(--bg-white); color: var(
 .nav-link-subtle { color: var(--text-main); text-decoration: none; font-weight: 500; font-size: 0.95rem; }
 .nav-link-subtle:hover { color: var(--brand-blue); }
 
-/* --- Buttons --- */
+/* Buttons */
 .btn-outline-dark {
   background: transparent; color: var(--text-main); 
   border: 1px solid var(--border-light); border-radius: 6px;
@@ -65,7 +65,7 @@ body { width: 100%; overflow-x: hidden; background: var(--bg-white); color: var(
 }
 .btn-white-solid:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
-/* The Premium Get Started Button */
+/* Get Started button */
 .btn-get-started {
   position: relative;
   overflow: hidden;
@@ -85,19 +85,19 @@ body { width: 100%; overflow-x: hidden; background: var(--bg-white); color: var(
   box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3), 0 2px 4px -1px rgba(59, 130, 246, 0.2);
 }
 
-/* The Hover Lift & Stronger Shadow */
+/* The hover lift */
 .btn-get-started:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4), 0 4px 6px -2px rgba(59, 130, 246, 0.2);
 }
 
-/* The Click effect */
+/* Click effect */
 .btn-get-started:active {
   transform: translateY(0);
   box-shadow: 0 2px 4px -1px rgba(59, 130, 246, 0.3);
 }
 
-/* The Cool "Shine" Animation on Hover */
+/* Animation on hover */
 .btn-get-started::after {
   content: "";
   position: absolute;
@@ -126,7 +126,7 @@ body { width: 100%; overflow-x: hidden; background: var(--bg-white); color: var(
 
 .hero-sub-clean { font-size: 1.25rem; color: var(--text-muted); margin-bottom: 2.5rem; line-height: 1.6; }
 
-/* Dashboard Overlap Graphic */
+/* Dashboard overlap graphic */
 .dashboard-overlap-container {
   max-width: 1000px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 2;
 }
@@ -148,10 +148,10 @@ body { width: 100%; overflow-x: hidden; background: var(--bg-white); color: var(
 .mockup-card.top { flex: none; height: 100px; }
 .mockup-grid { display: flex; gap: 1rem; flex: 1; }
 
-/* --- Dark Logos Section --- */
+/* -- Dark logos section */
 .dark-section-clean {
   background: var(--dark-navy); padding: 12rem 0 4rem 0; 
-  margin-top: -8rem; /* Pulls it up behind the dashboard image */
+  margin-top: -8rem;
   position: relative; z-index: 1;
 }
 .logo-ticker-clean {
@@ -159,7 +159,7 @@ body { width: 100%; overflow-x: hidden; background: var(--bg-white); color: var(
 }
 .logo-item { font-size: 1.5rem; font-weight: 700; color: var(--bg-white); }
 
-/* --- Features Split View --- */
+/* Features split view */
 .split-feature-section { padding: 8rem 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
 .section-title-clean { font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; letter-spacing: -0.02em; }
 .section-sub-clean { font-size: 1.15rem; color: var(--text-muted); margin-bottom: 3rem; line-height: 1.6; }
@@ -178,7 +178,7 @@ body { width: 100%; overflow-x: hidden; background: var(--bg-white); color: var(
   width: 100%; height: 500px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.08);
 }
 
-/* --- How it Works (Timeline) --- */
+/* How it Works (timeline) */
 .bg-light-gray { background: var(--bg-light-gray); padding: 8rem 0; border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); }
 .timeline-grid-clean { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; position: relative; margin-top: 4rem; text-align: center; }
 
@@ -197,7 +197,7 @@ body { width: 100%; overflow-x: hidden; background: var(--bg-white); color: var(
 .timeline-step h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem; }
 .timeline-step p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
 
-/* --- Pricing/Cards --- */
+/* Pricing/Cards */
 .pricing-section-clean { padding: 8rem 2rem; }
 .pricing-grid-clean { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; max-width: 900px; margin: 4rem auto 0 auto; }
 
@@ -214,12 +214,12 @@ body { width: 100%; overflow-x: hidden; background: var(--bg-white); color: var(
 .tier-features-clean li { padding: 12px 0; border-bottom: 1px solid var(--border-light); color: var(--text-main); font-size: 0.95rem; }
 .tier-features-clean li:last-child { border-bottom: none; }
 
-/* --- Giant Blue CTA --- */
+/* Blue CTA  */
 .bottom-cta-clean { background: var(--brand-blue); padding: 8rem 2rem; color: var(--bg-white); }
 .cta-title { font-size: 3rem; font-weight: 700; margin-bottom: 1.5rem; letter-spacing: -0.02em; }
 .cta-sub { font-size: 1.25rem; opacity: 0.9; max-width: 600px; margin: 0 auto 3rem auto; line-height: 1.6; }
 
-/* --- Footer --- */
+/* Footer */
 .footer-clean { background: var(--dark-navy); color: var(--bg-white); padding: 6rem 2rem 4rem 2rem; }
 .footer-flex { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4rem; }
 .footer-brand-clean p { color: #9ca3af; margin-top: 1rem; max-width: 300px; font-size: 0.95rem; }
@@ -230,7 +230,7 @@ body { width: 100%; overflow-x: hidden; background: var(--bg-white); color: var(
 .link-group a { display: block; color: var(--bg-white); text-decoration: none; margin-bottom: 1rem; font-size: 0.95rem; transition: color 0.2s; }
 .link-group a:hover { color: var(--brand-blue); }
 
-/* --- Responsive Layout Adjustments --- */
+/* Responsive layout adjustments */
 @media (max-width: 900px) {
   .hero-title-clean { font-size: 2.5rem; }
   .split-feature-section { grid-template-columns: 1fr; gap: 2rem; }
