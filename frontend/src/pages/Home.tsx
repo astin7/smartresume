@@ -178,7 +178,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Pricing / Loved by Teams */}
+      {/* Pricing */}
       <section id="pricing" className="pricing-section-clean container">
          <div className="section-header-clean text-center">
             <h2 className="section-title-clean">Ready to get hired?</h2>
@@ -187,7 +187,7 @@ export default function Home() {
 
           <div className="pricing-grid-clean">
             {/* Free */}
-            <motion.div className="pricing-card-clean" variants={fadeUp} initial="offscreen" whileInView="onscreen" viewport={{ once: true }}>
+            <motion.div className="pricing-card-clean free-card" variants={fadeUp} initial="offscreen" whileInView="onscreen" viewport={{ once: true }}>
               <div className="tier-header-clean">
                 <h4>Free</h4>
                 <div className="price-clean">$0<span>/mo</span></div>
@@ -197,10 +197,12 @@ export default function Home() {
                 <li>Basic Formatting Check</li>
                 <li>Limited Job Feed Access</li>
               </ul>
+              <Link to="/signup" className="btn-outline-blue">Start Free</Link>
             </motion.div>
 
             {/* Pro */}
-            <motion.div className="pricing-card-clean" variants={fadeUp} initial="offscreen" whileInView="onscreen" viewport={{ once: true, delay: 0.1 }}>
+            <motion.div className="pricing-card-clean pro-card" variants={fadeUp} initial="offscreen" whileInView="onscreen" viewport={{ once: true, delay: 0.1 }}>
+              <div className="badge">Best Value</div>
               <div className="tier-header-clean">
                 <h4>Pro</h4>
                 <div className="price-clean">$20<span>/mo</span></div>
@@ -211,6 +213,7 @@ export default function Home() {
                 <li>Full Live Internship Feed</li>
                 <li>Bullet Point Rewriter</li>
               </ul>
+              <Link to="/signup" className="btn-solid-blue">Upgrade to Pro</Link>
             </motion.div>
           </div>
       </section>

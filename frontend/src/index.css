@@ -148,7 +148,7 @@ body { width: 100%; overflow-x: hidden; background: var(--bg-white); color: var(
 .mockup-card.top { flex: none; height: 100px; }
 .mockup-grid { display: flex; gap: 1rem; flex: 1; }
 
-/* -- Dark logos section */
+/* Dark logos section */
 .dark-section-clean {
   background: var(--dark-navy); padding: 12rem 0 4rem 0; 
   margin-top: -8rem;
@@ -204,15 +204,60 @@ body { width: 100%; overflow-x: hidden; background: var(--bg-white); color: var(
 .pricing-card-clean {
   background: var(--bg-white); border: 1px solid var(--border-light); border-radius: 12px;
   padding: 3rem; box-shadow: 0 4px 6px rgba(0,0,0,0.02); transition: 0.3s;
+  display: flex; flex-direction: column; position: relative;
 }
-.pricing-card-clean:hover { box-shadow: 0 20px 40px rgba(0,0,0,0.08); transform: translateY(-4px); }
+
+/* Free card specific hover */
+.free-card:hover { box-shadow: 0 20px 40px rgba(0,0,0,0.08); transform: translateY(-4px); }
+
+/* Pro card  */
+.pro-card {
+  border: 2px solid var(--brand-blue);
+  box-shadow: 0 20px 25px -5px rgba(43, 152, 214, 0.15), 0 8px 10px -6px rgba(43, 152, 214, 0.1);
+  transform: translateY(-12px);
+}
+.pro-card:hover { 
+  transform: translateY(-16px); 
+  box-shadow: 0 25px 30px -5px rgba(43, 152, 214, 0.2); 
+}
+.pro-card .tier-header-clean h4 { color: var(--brand-blue); }
+
+/* The 'Best Value' tag */
+.badge {
+  position: absolute; top: -14px; right: 24px;
+  background: var(--brand-blue); color: var(--bg-white);
+  padding: 6px 14px; border-radius: 20px; font-size: 0.75rem;
+  font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+}
+
 .tier-header-clean h4 { font-size: 1.25rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1rem; }
 .price-clean { font-size: 3.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 2rem; letter-spacing: -0.03em; }
 .price-clean span { font-size: 1rem; font-weight: 500; color: var(--text-muted); }
 
-.tier-features-clean { list-style: none; }
-.tier-features-clean li { padding: 12px 0; border-bottom: 1px solid var(--border-light); color: var(--text-main); font-size: 0.95rem; }
+.tier-features-clean { list-style: none; flex-grow: 1; margin-bottom: 2.5rem; }
+.tier-features-clean li { 
+  padding: 12px 0; border-bottom: 1px solid var(--border-light); 
+  color: var(--text-main); font-size: 0.95rem; display: flex; align-items: center; 
+}
 .tier-features-clean li:last-child { border-bottom: none; }
+.tier-features-clean li::before {
+  content: '✓'; color: var(--brand-blue); font-weight: 800; font-size: 1.1rem; margin-right: 12px;
+}
+
+.btn-outline-blue {
+  width: 100%; padding: 0.875rem; border-radius: 8px; font-weight: 600; font-size: 1rem;
+  cursor: pointer; background: transparent; border: 2px solid var(--border-light);
+  color: var(--text-muted); transition: all 0.2s; text-align: center; display: block; text-decoration: none;
+}
+.btn-outline-blue:hover { border-color: var(--brand-blue); color: var(--brand-blue); }
+
+.btn-solid-blue {
+  width: 100%; padding: 0.875rem; border-radius: 8px; font-weight: 600; font-size: 1rem;
+  cursor: pointer; background: var(--brand-blue); border: 2px solid var(--brand-blue);
+  color: var(--bg-white); transition: all 0.2s; text-align: center; display: block; 
+  text-decoration: none; box-shadow: 0 4px 6px -1px rgba(43, 152, 214, 0.3);
+}
+.btn-solid-blue:hover { filter: brightness(0.9); }
 
 /* Blue CTA  */
 .bottom-cta-clean { background: var(--brand-blue); padding: 8rem 2rem; color: var(--bg-white); }
